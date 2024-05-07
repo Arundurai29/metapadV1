@@ -1,5 +1,5 @@
 // LoginScreen.tsx
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import {
   View,
   TextInput,
@@ -12,6 +12,7 @@ import {
   Text,
   TouchableOpacity,
   ScrollView
+
 } from "react-native";
 import { useNavigation } from '@react-navigation/native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -20,12 +21,15 @@ import { LinearGradient } from "expo-linear-gradient";
 import { RouteProp } from '@react-navigation/native';
 import { useFonts } from "expo-font";
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import * as ScreenOrientation from 'expo-screen-orientation'
+import { StatusBar } from 'expo-status-bar';
+import SoundButton from './SoundButton';
 
 const logo = require("../../assets/images/metapad.png");
 const login_bg = require("../../assets/images/login-bg.png");
 
 type RootStackParamList = {
-  SignUp: undefined;
+  Login: undefined;
   Profile: { uid: string };
 };
 
@@ -47,6 +51,30 @@ const LoginScreen: React.FC<{
     navigation.navigate('SignUp');
   };
 
+  useEffect(() => {
+    async function changeScreenOrientation() {
+      try {
+        await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+      } catch (error) {
+        console.error('Error locking screen orientation:', error);
+      }
+    }
+  
+    changeScreenOrientation();
+  
+    return () => {
+      async function unlockScreenOrientation() {
+        try {
+          await ScreenOrientation.unlockAsync();
+        } catch (error) {
+          console.error('Error unlocking screen orientation:', error);
+        }
+      }
+  
+      unlockScreenOrientation();
+    };
+  }, []);
+
   const login = async () => {
     setLoading(true);
     try {
@@ -55,9 +83,7 @@ const LoginScreen: React.FC<{
     } catch (error) {
       console.log(error);
       alert('Login failed: ' + error.message);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
   const [isLoaded] = useFonts({
     "pop-mid": require("../../assets/fonts/Poppins-Medium.ttf"),
@@ -66,11 +92,13 @@ const LoginScreen: React.FC<{
     "pop-xbold": require("../../assets/fonts/Poppins-ExtraBold.ttf"),
   });
   return (
+    
       <ImageBackground
         source={login_bg}
         resizeMode="cover"
         style={styles.container}
       >
+        <ScrollView>
         <View style={styles.Logos}>
           <Image style={styles.Logo} source={logo} />
         </View>
@@ -78,6 +106,7 @@ const LoginScreen: React.FC<{
           <Text style={styles.head}>Login Here</Text>
           <Text style={[styles.belowhead, styles.mb20]}>Welcome back you’ve
 been missed!</Text>
+
         </View>
         <KeyboardAvoidingView behavior='padding'>
           <TextInput
@@ -124,18 +153,30 @@ been missed!</Text>
                 end={{ x: 1, y: 2 }}
                 style={styles.Button}
               >
-                <TouchableOpacity onPress={login}>
-                  <Text style={styles.login}>Login</Text>
-                </TouchableOpacity>
+               
+                <SoundButton
+        title="Login"
+        soundPath={require('../../src/sound.mp3')}
+        onPress={login}
+        style={styles.button}
+        textStyle={styles.login} // Use the same style as the button
+      />
               </LinearGradient>
+              <SoundButton
+        title="Don't have an account? Sign Up"
+        soundPath={require('../../src/sound.mp3')}
+        onPress={goToSignUp}
+        style={styles}
+        textStyle={styles.new} // Use the same style as the button
+      />
              
-              <TouchableOpacity onPress={goToSignUp}>
-                <Text style={styles.new}>Don't have an account? Sign Up</Text>
-              </TouchableOpacity>
             </View>
           )}
         </KeyboardAvoidingView>
+        </ScrollView>
+        <StatusBar hidden={true} translucent={true} />
       </ImageBackground>
+     
   );
 };
 

@@ -1,5 +1,5 @@
   // SignUpScreen.tsx
-  import React, { useState } from 'react';
+  import React, { useState,useEffect } from 'react';
   import {
     View,
     TextInput,
@@ -21,6 +21,7 @@
   import { LinearGradient } from "expo-linear-gradient";
   import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import * as ScreenOrientation from 'expo-screen-orientation'
 
   const logo = require("../../assets/images/metapad.png");
 const login_bg = require("../../assets/images/login-bg.png");
@@ -65,6 +66,30 @@ const SignUpScreen: React.FC<{
         set(ref(DATABASE, 'users/' + response.user.uid), {
           name: name,
           phone: phone,
+          level1Time:0,
+          level2Time:0,
+          level3Time:0,
+          level1:'start',
+          level2:'pending',
+          level3:'pending',
+          game2level1Time:0,
+          game2level2Time:0,
+          game2level3Time:0,
+          game2level1:'start',
+          game2level2:'pending',
+          game2level3:'pending',
+          game3level1Time:0,
+          game3level2Time:0,
+          game3level3Time:0,
+          game3level1:'start',
+          game3level2:'pending',
+          game3level3:'pending',
+          game4level1Time:0,
+          game4level2Time:0,
+          game4level3Time:0,
+          game4level1:'start',
+          game4level2:'pending',
+          game4level3:'pending',
         });
   
         navigation.navigate('Home', { uid: response.user.uid });
@@ -88,7 +113,29 @@ const SignUpScreen: React.FC<{
       "pop-xbold": require("../../assets/fonts/Poppins-ExtraBold.ttf"),
     });
 
-
+    useEffect(() => {
+      async function changeScreenOrientation() {
+        try {
+          await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+        } catch (error) {
+          console.error('Error locking screen orientation:', error);
+        }
+      }
+    
+      changeScreenOrientation();
+    
+      return () => {
+        async function unlockScreenOrientation() {
+          try {
+            await ScreenOrientation.unlockAsync();
+          } catch (error) {
+            console.error('Error unlocking screen orientation:', error);
+          }
+        }
+    
+        unlockScreenOrientation();
+      };
+    }, []);
 
     return (
       <ScrollView>
