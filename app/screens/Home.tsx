@@ -150,14 +150,14 @@ const Home: React.FC<{
             />
             <View style={styles.playBtns}>
               <View>
-                <Text style={styles.pBtnHead} >Glycogen Metabolism</Text>
+                <Text style={styles.pBtnHead} >Electron Transport Chain</Text>
               </View>
               <View style={styles.playBtn}>
                 <AntDesign name="caretright" size={20} color="#fff" />
               </View>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.puzzleBtns, styles.boxShadow]} onPress={() => navigation.navigate("game2Levels",{ uid: uid })} >
+          <TouchableOpacity style={[styles.puzzleBtns, styles.boxShadow]} onPress={() => navigation.navigate("game2levels",{ uid: uid })} >
             <Text style={styles.puzzleHead}>Puzzle 2</Text>
             <Image
               style={styles.puzzleBtn}
@@ -166,14 +166,14 @@ const Home: React.FC<{
             />
             <View style={styles.playBtns}>
               <View>
-                <Text style={styles.pBtnHead} > Electron Transport Chain</Text>
+                <Text style={styles.pBtnHead} > Glycogen Metabolism</Text>
               </View>
               <View style={styles.playBtn}>
                 <AntDesign name="caretright" size={20} color="#fff" />
               </View>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.puzzleBtns, styles.boxShadow]} onPress={() => navigation.navigate("game3Levels",{ uid: uid })} >
+          <TouchableOpacity style={[styles.puzzleBtns, styles.boxShadow]} onPress={() => navigation.navigate("game3levels",{ uid: uid })} >
             <Text style={styles.puzzleHead}>Puzzle 3</Text>
             <Image
               style={styles.puzzleBtn}
@@ -182,14 +182,14 @@ const Home: React.FC<{
             />
             <View style={styles.playBtns}>
               <View>
-                <Text style={styles.pBtnHead} > Glycogen</Text>
+                <Text style={styles.pBtnHead} > Gluconeogenesis</Text>
               </View>
               <View style={styles.playBtn}>
                 <AntDesign name="caretright" size={20} color="#fff" />
               </View>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.puzzleBtns, styles.boxShadow]} onPress={() => navigation.navigate("game4Levels",{ uid: uid })} >
+          <TouchableOpacity style={[styles.puzzleBtns, styles.boxShadow]} onPress={() => navigation.navigate("game4levels",{ uid: uid })} >
             <Text style={styles.puzzleHead}>Puzzle 4</Text>
             <Image
               style={styles.puzzleBtn}
@@ -198,7 +198,7 @@ const Home: React.FC<{
             />
             <View style={styles.playBtns}>
               <View>
-                <Text style={styles.pBtnHead} > Mitochondrial </Text>
+                <Text style={styles.pBtnHead} > TCA Cycle </Text>
               </View>
               <View style={styles.playBtn}>
                 <AntDesign name="caretright" size={20} color="#fff" />

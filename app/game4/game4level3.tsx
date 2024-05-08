@@ -52,74 +52,6 @@ const imageSources = [
   require("../../src/puzzle4-3/image26.jpg"),
   require("../../src/puzzle4-3/image27.jpg"),
   require("../../src/puzzle4-3/image28.jpg"),
-  require("../../src/puzzle4-3/image29.jpg"),
-  require("../../src/puzzle4-3/image30.jpg"),
-  require("../../src/puzzle4-3/image31.jpg"),
-  require("../../src/puzzle4-3/image32.jpg"),
-  require("../../src/puzzle4-3/image33.jpg"),
-  require("../../src/puzzle4-3/image34.jpg"),
-  require("../../src/puzzle4-3/image35.jpg"),
-  require("../../src/puzzle4-3/image36.jpg"),
-  require("../../src/puzzle4-3/image37.jpg"),
-  require("../../src/puzzle4-3/image38.jpg"),
-  require("../../src/puzzle4-3/image39.jpg"),
-  require("../../src/puzzle4-3/image40.jpg"),
-  require("../../src/puzzle4-3/image41.jpg"),
-  require("../../src/puzzle4-3/image42.jpg"),
-  require("../../src/puzzle4-3/image43.jpg"),
-  require("../../src/puzzle4-3/image44.jpg"),
-  require("../../src/puzzle4-3/image45.jpg"),
-  require("../../src/puzzle4-3/image46.jpg"),
-  require("../../src/puzzle4-3/image47.jpg"),
-  require("../../src/puzzle4-3/image48.jpg"),
-  require("../../src/puzzle4-3/image49.jpg"),
-  require("../../src/puzzle4-3/image50.jpg"),
-  require("../../src/puzzle4-3/image51.jpg"),
-  require("../../src/puzzle4-3/image52.jpg"),
-  require("../../src/puzzle4-3/image53.jpg"),
-  require("../../src/puzzle4-3/image54.jpg"),
-  require("../../src/puzzle4-3/image55.jpg"),
-  require("../../src/puzzle4-3/image56.jpg"),
-  require("../../src/puzzle4-3/image57.jpg"),
-  require("../../src/puzzle4-3/image58.jpg"),
-  require("../../src/puzzle4-3/image59.jpg"),
-  require("../../src/puzzle4-3/image60.jpg"),
-  require("../../src/puzzle4-3/image61.jpg"),
-  require("../../src/puzzle4-3/image62.jpg"),
-  require("../../src/puzzle4-3/image63.jpg"),
-  require("../../src/puzzle4-3/image64.jpg"),
-  require("../../src/puzzle4-3/image65.jpg"),
-  require("../../src/puzzle4-3/image66.jpg"),
-  require("../../src/puzzle4-3/image67.jpg"),
-  require("../../src/puzzle4-3/image68.jpg"),
-  require("../../src/puzzle4-3/image69.jpg"),
-  require("../../src/puzzle4-3/image70.jpg"),
-  require("../../src/puzzle4-3/image71.jpg"),
-  require("../../src/puzzle4-3/image72.jpg"),
-  require("../../src/puzzle4-3/image73.jpg"),
-  require("../../src/puzzle4-3/image74.jpg"),
-  require("../../src/puzzle4-3/image75.jpg"),
-  require("../../src/puzzle4-3/image76.jpg"),
-  require("../../src/puzzle4-3/image77.jpg"),
-  require("../../src/puzzle4-3/image78.jpg"),
-  require("../../src/puzzle4-3/image79.jpg"),
-  require("../../src/puzzle4-3/image80.jpg"),
-  require("../../src/puzzle4-3/image81.jpg"),
-  require("../../src/puzzle4-3/image82.jpg"),
-  require("../../src/puzzle4-3/image83.jpg"),
-  require("../../src/puzzle4-3/image84.jpg"),
-  require("../../src/puzzle4-3/image85.jpg"),
-  require("../../src/puzzle4-3/image86.jpg"),
-  require("../../src/puzzle4-3/image87.jpg"),
-  require("../../src/puzzle4-3/image88.jpg"),
-  require("../../src/puzzle4-3/image89.jpg"),
-  require("../../src/puzzle4-3/image90.jpg"),
-  require("../../src/puzzle4-3/image91.jpg"),
-  require("../../src/puzzle4-3/image92.jpg"),
-  require("../../src/puzzle4-3/image93.jpg"),
-  require("../../src/puzzle4-3/image94.jpg"),
-  require("../../src/puzzle4-3/image95.jpg"),
-  require("../../src/puzzle4-3/image96.jpg"),
 ];
 
 const Game4Level3 = ({ navigation, route }) => {
@@ -129,7 +61,8 @@ const Game4Level3 = ({ navigation, route }) => {
   const { uid } = route.params ?? {};
   const [timer, setTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  
+  const [gameStarted, setGameStarted] = useState(false);
+
   const positions = useSharedValue(
     Object.assign(
       {},
@@ -229,9 +162,10 @@ const Game4Level3 = ({ navigation, route }) => {
     }
   };
 
-  const handleStartFinishButton = () => {
+ const handleStartFinishButton = () => {
     if (!isPlaying) {
       setIsPlaying(true);
+      setGameStarted(true); // Update gameStarted state when Start button is clicked
     } else {
       checkPosition();
     }
@@ -251,14 +185,14 @@ const Game4Level3 = ({ navigation, route }) => {
       console.log("All images placed correctly");
       saveTimingToDatabase(timer);
       set(ref(DATABASE, `users/${uid}/game4level3`), "completed");
-      navigation.navigate("NextScreen",{ uid: uid ,  level: "Game4Level3"});
+      navigation.navigate("NextLevelScreen4",{ uid: uid ,  level: "game4level3"});
     } else {
       console.log("Not all images placed correctly");
     }
   };
 
   const navigateToPrices = () => {
-    navigation.navigate("Game4level", { uid: uid,level: "Game4Level3" });
+    navigation.navigate("gamelevel", { uid: uid,level: "game4level3" });
   };
 
   const memoizedUserData = useMemo(() => userData?.name || "", [userData]);
@@ -326,6 +260,7 @@ const Game4Level3 = ({ navigation, route }) => {
             key={index}
             positions={positions}
             id={index}
+            gameStarted={gameStarted} 
             draggable={isPlaying} // Conditionally enable dragging
           >
             <Image source={source} style={styles.image} />
@@ -351,7 +286,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     // padding: 16,
      marginTop: 110,
-     marginLeft:10,
+     marginLeft:20,
      backgroundColor:'#000'
   },
   backgroundImage: {
@@ -362,8 +297,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 42,
-    height: 45,
+    width: 80,
+    height: 80,
     borderColor: "#000",
     borderWidth:0.3,
     padding:0,

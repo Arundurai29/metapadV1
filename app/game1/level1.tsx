@@ -17,41 +17,23 @@ import { ref, get, set } from "firebase/database";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { DATABASE } from "../../FireBaseConfig";
-import Draggable from "../draggable/draggable";
+import Draggable from "../draggable/draggable1-1";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
+import { MARGIN, SIZE, SIZE2 } from '../utils/utils1-1';
 
 const glass = require("../../assets/images/glass.png");
 const backgroundImage = require("../../src/imgpanda.png");
 const imageSources = [
-  require("../../src/images/image1.png"),
-  require("../../src/images/image2.png"),
-  require("../../src/images/image3.png"),
-  require("../../src/images/image4.png"),
-  require("../../src/images/image5.png"),
-  require("../../src/images/image6.png"),
-  require("../../src/images/image7.png"),
-  require("../../src/images/image8.png"),
-  require("../../src/images/image9.png"),
-  require("../../src/images/image10.png"),
-  require("../../src/images/image11.png"),
-  require("../../src/images/image12.png"),
-  require("../../src/images/image13.png"),
-  require("../../src/images/image14.png"),
-  require("../../src/images/image15.png"),
-  require("../../src/images/image16.png"),
-  require("../../src/images/image17.png"),
-  require("../../src/images/image18.png"),
-  require("../../src/images/image19.png"),
-  require("../../src/images/image20.png"),
-  require("../../src/images/image21.png"),
-  require("../../src/images/image22.png"),
-  require("../../src/images/image23.png"),
-  require("../../src/images/image24.png"),
-  require("../../src/images/image25.png"),
-  require("../../src/images/image26.png"),
-  require("../../src/images/image27.png"),
-  require("../../src/images/image28.png"),
+  require("../../src/puzzle1-1/image1.png"),
+  require("../../src/puzzle1-1/image2.png"),
+  require("../../src/puzzle1-1/image3.png"),
+  require("../../src/puzzle1-1/image4.png"),
+  require("../../src/puzzle1-1/image5.png"),
+  require("../../src/puzzle1-1/image6.png"),
+  require("../../src/puzzle1-1/image7.png"),
+  require("../../src/puzzle1-1/image8.png"),
+  require("../../src/puzzle1-1/image9.png"),
 ];
 
 const Level1 = ({ navigation, route }) => {
@@ -61,22 +43,14 @@ const Level1 = ({ navigation, route }) => {
   const { uid } = route.params ?? {};
   const [timer, setTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  
+  const [gameStarted, setGameStarted] = useState(false); // New state variable
+
   const positions = useSharedValue(
     Object.assign(
       {},
       ...imageSources.map((item, index) => ({ [index]: index }))
     )
   );
-
-  // useEffect(() => {
-  //   const setScreenOrientation = async () => {
-  //     await ScreenOrientation.lockAsync(
-  //       ScreenOrientation.OrientationLock.PORTRAIT
-  //     );
-  //   };
-  //   setScreenOrientation();
-  // }, []);
 
   // Lock screen orientation to landscape when screen gains focus
   useEffect(() => {
@@ -164,6 +138,7 @@ const Level1 = ({ navigation, route }) => {
   const handleStartFinishButton = () => {
     if (!isPlaying) {
       setIsPlaying(true);
+      setGameStarted(true); // Update gameStarted state when Start button is clicked
     } else {
       checkPosition();
     }
@@ -206,7 +181,6 @@ const Level1 = ({ navigation, route }) => {
   };
 
   return (
-    // <ScrollView>
     <GestureHandlerRootView style={styles.container}>
       <TouchableOpacity style={styles.arrowButton} onPress={navigateToPrices}>
         <AntDesign name="arrowleft" size={24} color="#003090" />
@@ -224,11 +198,9 @@ const Level1 = ({ navigation, route }) => {
             <Entypo name="stopwatch" size={24} color="#fff" /> {formatTimer()}
           </Text>
         </LinearGradient>
-
-        
       </View>
       <View style={styles.btnContainer} >
-      <LinearGradient
+        <LinearGradient
           start={{ x: 0, y: 0.2 }}
           colors={["#003090", "#3B66CF"]}
           end={{ x: 1, y: 2 }}
@@ -256,9 +228,9 @@ const Level1 = ({ navigation, route }) => {
         {imageSources.map((source, index) => (
           <Draggable
             key={index}
-            positions={positions}
+            positions={positions} 
             id={index}
-            draggable={isPlaying} // Conditionally enable dragging
+            gameStarted={gameStarted} // Pass gameStarted prop
           >
             <Image source={source} style={styles.image} />
           </Draggable>
@@ -266,7 +238,6 @@ const Level1 = ({ navigation, route }) => {
       </View>
       <StatusBar hidden={true} translucent={true} />
     </GestureHandlerRootView>
-    // </ScrollView>
   );
 };
 
@@ -282,8 +253,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     // padding: 16,
-     marginTop: -10,
-     marginLeft:38,
+     marginTop: 13,
+     marginLeft:120,
      backgroundColor:'#000'
   },
   backgroundImage: {
@@ -294,13 +265,13 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 80,
-    height: 80,
+    width: 150,
+    height: 110,
     borderColor: "#000",
-    borderWidth: 1,
-   padding:0,
-   objectFit:'fill',
-   margin:0,
+    borderWidth: 0.3,
+    padding:0,
+    objectFit:'fill',
+    marginBottom:-20,
   },
   buttonContainer: {
     flexDirection: "row",

@@ -1,5 +1,5 @@
 import React from 'react';
-import {PanGestureHandler} from 'react-native-gesture-handler';
+import { PanGestureHandler } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedGestureHandler,
   useAnimatedReaction,
@@ -7,21 +7,20 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import {MARGIN, getOrder, getPosition} from '../utils/utils4-2';
+import { MARGIN, getOrder, getPosition } from '../utils/utils4-2';
 
-const Draggable = ({children, positions, id}) => {
+const Draggable = ({ children, positions, id, gameStarted }) => {
   const position = getPosition(positions.value[id]);
   const translateX = useSharedValue(position.x);
   const translateY = useSharedValue(position.y);
-
   const isGestureActive = useSharedValue(false);
 
   useAnimatedReaction(
     () => positions.value[id],
     newOrder => {
-      const newPostions = getPosition(newOrder);
-      translateX.value = withTiming(newPostions.x);
-      translateY.value = withTiming(newPostions.y);
+      const newPosition = getPosition(newOrder);
+      translateX.value = withTiming(newPosition.x);
+      translateY.value = withTiming(newPosition.y);
     },
   );
 
@@ -42,10 +41,10 @@ const Draggable = ({children, positions, id}) => {
           key => positions.value[key] === newOrder,
         );
         if (idToSwap) {
-          const newPostions = JSON.parse(JSON.stringify(positions.value));
-          newPostions[id] = newOrder;
-          newPostions[idToSwap] = oldOrder;
-          positions.value = newPostions;
+          const newPositions = { ...positions.value };
+          newPositions[id] = newOrder;
+          newPositions[idToSwap] = oldOrder;
+          positions.value = newPositions;
         }
       }
     },
@@ -66,19 +65,19 @@ const Draggable = ({children, positions, id}) => {
       position: 'absolute',
       margin: MARGIN * 2,
       zIndex,
-      transform: [
-        {translateX: translateX.value},
-        {translateY: translateY.value},
-        {scale},
-      ],
+      transform: [{ translateX: translateX.value }, { translateY: translateY.value }, { scale }],
     };
   });
 
   return (
     <Animated.View style={animatedStyle}>
-      <PanGestureHandler onGestureEvent={panGesture}>
+      {gameStarted ? (
+        <PanGestureHandler onGestureEvent={panGesture}>
+          <Animated.View>{children}</Animated.View>
+        </PanGestureHandler>
+      ) : (
         <Animated.View>{children}</Animated.View>
-      </PanGestureHandler>
+      )}
     </Animated.View>
   );
 };

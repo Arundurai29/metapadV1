@@ -106,6 +106,8 @@ const Levels: React.FC<{
   const level1Complete = userData.level1 === "start" && userData.level1 === "completed";
   const level2Complete =  userData.level1 === "completed";
   const level3Complete =  userData.level2 === "completed";
+  const level4Complete =  userData.level3 === "completed";
+  const level5Complete =  userData.level4 === "completed";
 
   return (
     <ScrollView>
@@ -122,7 +124,7 @@ const Levels: React.FC<{
           <AntDesign name="arrowleft" size={24} color="black" />
         </TouchableOpacity>
         <View style={styles.titles}>
-          <Text style={styles.head}>Glycogen Metabolism Puzzle</Text>
+          <Text style={styles.head}>Electron Transport Chain</Text>
         </View>
         <View style={styles.level_section}>
           <Image source={doctor1} style={styles.doctor_img} />
@@ -181,6 +183,42 @@ const Levels: React.FC<{
                 </View>
               </View>
             </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.puzzleBtns,
+                styles.boxShadow,
+                !level4Complete && styles.disabledButton,
+              ]}
+              onPress={() => navigation.navigate("Level", { uid: uid, level: "level4"})}
+              disabled={!level4Complete}
+            >
+              <View style={styles.playBtns}>
+                <View>
+                  <Text style={styles.pBtnHead}>Level 4</Text>
+                </View>
+                <View style={styles.playBtn}>
+                  <AntDesign name="caretright" size={15} color="#fff" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.puzzleBtns,
+                styles.boxShadow,
+                !level5Complete && styles.disabledButton,
+              ]}
+              onPress={() => navigation.navigate("Level", { uid: uid, level: "level5"})}
+              
+            >
+              <View style={styles.playBtns}>
+                <View>
+                  <Text style={styles.pBtnHead}>Level 5</Text>
+                </View>
+                <View style={styles.playBtn}>
+                  <AntDesign name="caretright" size={15} color="#fff" />
+                </View>
+              </View>
+            </TouchableOpacity>
           </View>
           <Image source={doctor2} style={styles.doctor_img} />
         </View>
@@ -197,6 +235,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 40,
+    paddingTop:10,
     backgroundColor: "#fff",
     justifyContent: "center",
   },

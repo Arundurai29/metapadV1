@@ -17,7 +17,7 @@ import { ref, get, set } from "firebase/database";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { DATABASE } from "../../FireBaseConfig";
-import Draggable2 from "../draggable/draggable2";
+import Draggable from "../draggable/draggable";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
 
@@ -52,76 +52,6 @@ const imageSources = [
   require("../../src/puzzle1-3/image26.png"),
   require("../../src/puzzle1-3/image27.png"),
   require("../../src/puzzle1-3/image28.png"),
-  require("../../src/puzzle1-3/image29.png"),
-  require("../../src/puzzle1-3/image30.png"),
-  require("../../src/puzzle1-3/image31.png"),
-  require("../../src/puzzle1-3/image32.png"),
-  require("../../src/puzzle1-3/image33.png"),
-  require("../../src/puzzle1-3/image34.png"),
-  require("../../src/puzzle1-3/image35.png"),
-  require("../../src/puzzle1-3/image36.png"),
-  require("../../src/puzzle1-3/image37.png"),
-  require("../../src/puzzle1-3/image38.png"),
-  require("../../src/puzzle1-3/image39.png"),
-  require("../../src/puzzle1-3/image40.png"),
-  require("../../src/puzzle1-3/image41.png"),
-  require("../../src/puzzle1-3/image42.png"),
-  require("../../src/puzzle1-3/image43.png"),
-  require("../../src/puzzle1-3/image44.png"),
-  require("../../src/puzzle1-3/image45.png"),
-  require("../../src/puzzle1-3/image46.png"),
-  require("../../src/puzzle1-3/image47.png"),
-  require("../../src/puzzle1-3/image48.png"),
-  require("../../src/puzzle1-3/image49.png"),
-  require("../../src/puzzle1-3/image50.png"),
-  require("../../src/puzzle1-3/image51.png"),
-  require("../../src/puzzle1-3/image52.png"),
-  require("../../src/puzzle1-3/image53.png"),
-  require("../../src/puzzle1-3/image54.png"),
-  require("../../src/puzzle1-3/image55.png"),
-  require("../../src/puzzle1-3/image56.png"),
-  require("../../src/puzzle1-3/image57.png"),
-  require("../../src/puzzle1-3/image58.png"),
-  require("../../src/puzzle1-3/image59.png"),
-  require("../../src/puzzle1-3/image60.png"),
-  require("../../src/puzzle1-3/image61.png"),
-  require("../../src/puzzle1-3/image62.png"),
-  require("../../src/puzzle1-3/image63.png"),
-  require("../../src/puzzle1-3/image64.png"),
-  require("../../src/puzzle1-3/image65.png"),
-  require("../../src/puzzle1-3/image66.png"),
-  require("../../src/puzzle1-3/image67.png"),
-  require("../../src/puzzle1-3/image68.png"),
-  require("../../src/puzzle1-3/image69.png"),
-  require("../../src/puzzle1-3/image70.png"),
-  require("../../src/puzzle1-3/image71.png"),
-  require("../../src/puzzle1-3/image72.png"),
-  require("../../src/puzzle1-3/image73.png"),
-  require("../../src/puzzle1-3/image74.png"),
-  require("../../src/puzzle1-3/image75.png"),
-  require("../../src/puzzle1-3/image76.png"),
-  require("../../src/puzzle1-3/image77.png"),
-  require("../../src/puzzle1-3/image78.png"),
-  require("../../src/puzzle1-3/image79.png"),
-  require("../../src/puzzle1-3/image80.png"),
-  require("../../src/puzzle1-3/image81.png"),
-  require("../../src/puzzle1-3/image82.png"),
-  require("../../src/puzzle1-3/image83.png"),
-  require("../../src/puzzle1-3/image84.png"),
-  require("../../src/puzzle1-3/image85.png"),
-  require("../../src/puzzle1-3/image86.png"),
-  require("../../src/puzzle1-3/image87.png"),
-  require("../../src/puzzle1-3/image88.png"),
-  require("../../src/puzzle1-3/image89.png"),
-  require("../../src/puzzle1-3/image90.png"),
-  require("../../src/puzzle1-3/image91.png"),
-  require("../../src/puzzle1-3/image92.png"),
-  require("../../src/puzzle1-3/image93.png"),
-  require("../../src/puzzle1-3/image94.png"),
-  require("../../src/puzzle1-3/image95.png"),
-  require("../../src/puzzle1-3/image96.png"),
-  require("../../src/puzzle1-3/image97.png"),
-  require("../../src/puzzle1-3/image98.png"),
 ];
 
 const Level3 = ({ navigation, route }) => {
@@ -131,7 +61,8 @@ const Level3 = ({ navigation, route }) => {
   const { uid } = route.params ?? {};
   const [timer, setTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  
+  const [gameStarted, setGameStarted] = useState(false);
+
   const positions = useSharedValue(
     Object.assign(
       {},
@@ -222,7 +153,7 @@ const Level3 = ({ navigation, route }) => {
 
   const saveTimingToDatabase = (timing) => {
     if (uid) {
-      const userTimingRef = ref(DATABASE, `users/${uid}/level1Time`);
+      const userTimingRef = ref(DATABASE, `users/${uid}/level3Time`);
       set(userTimingRef, timing)
         .then(() => console.log("Gameplay timing saved successfully"))
         .catch((error) =>
@@ -231,9 +162,12 @@ const Level3 = ({ navigation, route }) => {
     }
   };
 
+
+
   const handleStartFinishButton = () => {
     if (!isPlaying) {
       setIsPlaying(true);
+      setGameStarted(true); // Update gameStarted state when Start button is clicked
     } else {
       checkPosition();
     }
@@ -252,15 +186,15 @@ const Level3 = ({ navigation, route }) => {
     if (allPlaced) {
       console.log("All images placed correctly");
       saveTimingToDatabase(timer);
-      set(ref(DATABASE, `users/${uid}/level1`), "completed");
-      navigation.navigate("NextScreen",{ uid: uid ,  level: "level1"});
+      set(ref(DATABASE, `users/${uid}/level3`), "completed");
+      navigation.navigate("NextScreen",{ uid: uid ,  level: "level3"});
     } else {
       console.log("Not all images placed correctly");
     }
   };
 
   const navigateToPrices = () => {
-    navigation.navigate("Level", { uid: uid,level: "level1" });
+    navigation.navigate("Level", { uid: uid,level: "level3" });
   };
 
   const memoizedUserData = useMemo(() => userData?.name || "", [userData]);
@@ -324,14 +258,14 @@ const Level3 = ({ navigation, route }) => {
       </View>
       <View style={styles.wrapper}>
         {imageSources.map((source, index) => (
-          <Draggable2
+          <Draggable
             key={index}
             positions={positions}
             id={index}
-            draggable={isPlaying} // Conditionally enable dragging
+            gameStarted={gameStarted} 
           >
             <Image source={source} style={styles.image} />
-          </Draggable2>
+          </Draggable>
         ))}
       </View>
       <StatusBar hidden={true} translucent={true} />
@@ -351,9 +285,9 @@ const styles = StyleSheet.create({
   wrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
-   
-     marginTop: 30,
-     marginLeft:52,
+    // padding: 16,
+     marginTop: -10,
+     marginLeft:38,
      backgroundColor:'#000'
   },
   backgroundImage: {
@@ -364,13 +298,13 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 40,
-    height: 40,
+    width: 80,
+    height: 80,
     borderColor: "#000",
     borderWidth: 1,
    padding:0,
    objectFit:'fill',
-   marginBottom:-20,
+   margin:0,
   },
   buttonContainer: {
     flexDirection: "row",

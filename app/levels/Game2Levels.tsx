@@ -105,6 +105,8 @@ const Game2Levels: React.FC<{
   const game2level1Complete = userData.game2level1 === "start" && userData.game2level1 === "completed";
   const game2level2Complete =  userData.game2level1 === "completed";
   const game2level3Complete =  userData.game2level2 === "completed";
+  const game2level4Complete =  userData.game2level3 === "completed";
+  const game2level5Complete =  userData.game2level4 === "completed";
 
   return (
     <ScrollView>
@@ -120,7 +122,7 @@ const Game2Levels: React.FC<{
           <AntDesign name="arrowleft" size={24} color="black" />
         </TouchableOpacity>
         <View style={styles.titles}>
-          <Text style={styles.head}>Electron Transport Chain</Text>
+          <Text style={styles.head}>Glycogen Metabolism</Text>
         </View>
         <View style={styles.level_section}>
           <Image source={doctor1} style={styles.doctor_img} />
@@ -131,7 +133,7 @@ const Game2Levels: React.FC<{
                 styles.boxShadow,
               
               ]}
-              onPress={() => navigation.navigate("Game2level", { uid: uid, level: "Game2Level1" })}
+              onPress={() => navigation.navigate("game2level", { uid: uid, level: "game2level1" })}
               disabled={game2level1Complete}
             >
               <View style={styles.playBtns}>
@@ -149,7 +151,7 @@ const Game2Levels: React.FC<{
                 styles.boxShadow,
                 !game2level2Complete && styles.disabledButton,
               ]}
-              onPress={() => navigation.navigate("Game2level", { uid: uid, level: "Game2Level2"})}
+              onPress={() => navigation.navigate("game2level", { uid: uid, level: "game2level2"})}
               disabled={!game2level2Complete}
             >
               <View style={styles.playBtns}>
@@ -167,12 +169,48 @@ const Game2Levels: React.FC<{
                 styles.boxShadow,
                 !game2level3Complete && styles.disabledButton,
               ]}
-              onPress={() => navigation.navigate("Game2level", { uid: uid, level: "Game2Level3"})}
+              onPress={() => navigation.navigate("game2level", { uid: uid, level: "game2level3"})}
               disabled={!game2level3Complete}
             >
               <View style={styles.playBtns}>
                 <View>
                   <Text style={styles.pBtnHead}>Level 3</Text>
+                </View>
+                <View style={styles.playBtn}>
+                  <AntDesign name="caretright" size={15} color="#fff" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.puzzleBtns,
+                styles.boxShadow,
+                !game2level4Complete && styles.disabledButton,
+              ]}
+              onPress={() => navigation.navigate("game2level", { uid: uid, level: "game2level4"})}
+              disabled={!game2level4Complete}
+            >
+              <View style={styles.playBtns}>
+                <View>
+                  <Text style={styles.pBtnHead}>Level 4</Text>
+                </View>
+                <View style={styles.playBtn}>
+                  <AntDesign name="caretright" size={15} color="#fff" />
+                </View>
+              </View>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.puzzleBtns,
+                styles.boxShadow,
+                !game2level5Complete && styles.disabledButton,
+              ]}
+              onPress={() => navigation.navigate("game2level", { uid: uid, level: "game2level5"})}
+              disabled={!game2level5Complete}
+            >
+              <View style={styles.playBtns}>
+                <View>
+                  <Text style={styles.pBtnHead}>Level 5</Text>
                 </View>
                 <View style={styles.playBtn}>
                   <AntDesign name="caretright" size={15} color="#fff" />
@@ -195,6 +233,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 40,
+    paddingTop:10,
     backgroundColor: "#fff",
     justifyContent: "center",
   },

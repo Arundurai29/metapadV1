@@ -1,4 +1,3 @@
-// Level2.js
 import React, { useEffect, useState, useMemo } from "react";
 import {
   StyleSheet,
@@ -18,95 +17,48 @@ import { ref, get, set } from "firebase/database";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { DATABASE } from "../../FireBaseConfig";
-import Draggable from "../draggable/draggable2-3";
+import Draggable from "../draggable/draggable2-1";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
 
 const glass = require("../../assets/images/glass.png");
 const backgroundImage = require("../../src/imgpanda.png");
 const imageSources = [
-  require("../../src/puzzle-3-3/image1.jpg"),
-  require("../../src/puzzle-3-3/image2.jpg"),
-  require("../../src/puzzle-3-3/image3.jpg"),
-  require("../../src/puzzle-3-3/image4.jpg"),
-  require("../../src/puzzle-3-3/image5.jpg"),
-  require("../../src/puzzle-3-3/image6.jpg"),
-  require("../../src/puzzle-3-3/image7.jpg"),
-  require("../../src/puzzle-3-3/image8.jpg"),
-  require("../../src/puzzle-3-3/image9.jpg"),
-  require("../../src/puzzle-3-3/image10.jpg"),
-  require("../../src/puzzle-3-3/image11.jpg"),
-  require("../../src/puzzle-3-3/image12.jpg"),
-  require("../../src/puzzle-3-3/image13.jpg"),
-  require("../../src/puzzle-3-3/image14.jpg"),
-  require("../../src/puzzle-3-3/image15.jpg"),
-  require("../../src/puzzle-3-3/image16.jpg"),
-  require("../../src/puzzle-3-3/image17.jpg"),
-  require("../../src/puzzle-3-3/image18.jpg"),
-  require("../../src/puzzle-3-3/image19.jpg"),
-  require("../../src/puzzle-3-3/image20.jpg"),
-  require("../../src/puzzle-3-3/image21.jpg"),
-  require("../../src/puzzle-3-3/image22.jpg"),
-  require("../../src/puzzle-3-3/image23.jpg"),
-  require("../../src/puzzle-3-3/image24.jpg"),
-  require("../../src/puzzle-3-3/image25.jpg"),
-  require("../../src/puzzle-3-3/image26.jpg"),
-  require("../../src/puzzle-3-3/image27.jpg"),
-  require("../../src/puzzle-3-3/image28.jpg"),
-  require("../../src/puzzle-3-3/image29.jpg"),
-  require("../../src/puzzle-3-3/image30.jpg"),
-  require("../../src/puzzle-3-3/image31.jpg"),
-  require("../../src/puzzle-3-3/image32.jpg"),
-  require("../../src/puzzle-3-3/image33.jpg"),
-  require("../../src/puzzle-3-3/image34.jpg"),
-  require("../../src/puzzle-3-3/image35.jpg"),
-  require("../../src/puzzle-3-3/image36.jpg"),
-  require("../../src/puzzle-3-3/image37.jpg"),
-  require("../../src/puzzle-3-3/image38.jpg"),
-  require("../../src/puzzle-3-3/image39.jpg"),
-  require("../../src/puzzle-3-3/image40.jpg"),
-  require("../../src/puzzle-3-3/image41.jpg"),
-  require("../../src/puzzle-3-3/image42.jpg"),
-  require("../../src/puzzle-3-3/image43.jpg"),
-  require("../../src/puzzle-3-3/image44.jpg"),
-  require("../../src/puzzle-3-3/image45.jpg"),
-  require("../../src/puzzle-3-3/image46.jpg"),
-  require("../../src/puzzle-3-3/image47.jpg"),
-  require("../../src/puzzle-3-3/image48.jpg"),
-  require("../../src/puzzle-3-3/image49.jpg"),
-  require("../../src/puzzle-3-3/image50.jpg"),
-  require("../../src/puzzle-3-3/image51.jpg"),
-  require("../../src/puzzle-3-3/image52.jpg"),
-  require("../../src/puzzle-3-3/image53.jpg"),
-  require("../../src/puzzle-3-3/image54.jpg"),
-  require("../../src/puzzle-3-3/image55.jpg"),
-  require("../../src/puzzle-3-3/image56.jpg"),
-  require("../../src/puzzle-3-3/image57.jpg"),
-  require("../../src/puzzle-3-3/image58.jpg"),
-  require("../../src/puzzle-3-3/image59.jpg"),
-  require("../../src/puzzle-3-3/image60.jpg"),
-  require("../../src/puzzle-3-3/image61.jpg"),
-  require("../../src/puzzle-3-3/image62.jpg"),
-  require("../../src/puzzle-3-3/image63.jpg"),
-  require("../../src/puzzle-3-3/image64.jpg"),
-  require("../../src/puzzle-3-3/image65.jpg"),
-  require("../../src/puzzle-3-3/image66.jpg"),
-  require("../../src/puzzle-3-3/image67.jpg"),
-  require("../../src/puzzle-3-3/image68.jpg"),
-  require("../../src/puzzle-3-3/image69.jpg"),
-  require("../../src/puzzle-3-3/image70.jpg"),
-  require("../../src/puzzle-3-3/image71.jpg"),
-  require("../../src/puzzle-3-3/image72.jpg"),
-  require("../../src/puzzle-3-3/image73.jpg"),
-  require("../../src/puzzle-3-3/image74.jpg"),
-  require("../../src/puzzle-3-3/image75.jpg"),
-  require("../../src/puzzle-3-3/image76.jpg"),
-  require("../../src/puzzle-3-3/image77.jpg"),
-  require("../../src/puzzle-3-3/image78.jpg"),
-  require("../../src/puzzle-3-3/image79.jpg"),
-  require("../../src/puzzle-3-3/image80.jpg"),
-  require("../../src/puzzle-3-3/image81.jpg"),
-
+  require("../../src/puzzle3-3/image1.jpg"),
+  require("../../src/puzzle3-3/image2.jpg"),
+  require("../../src/puzzle3-3/image3.jpg"),
+  require("../../src/puzzle3-3/image4.jpg"),
+  require("../../src/puzzle3-3/image5.jpg"),
+  require("../../src/puzzle3-3/image6.jpg"),
+  require("../../src/puzzle3-3/image7.jpg"),
+  require("../../src/puzzle3-3/image8.jpg"),
+  require("../../src/puzzle3-3/image9.jpg"),
+  require("../../src/puzzle3-3/image10.jpg"),
+  require("../../src/puzzle3-3/image11.jpg"),
+  require("../../src/puzzle3-3/image12.jpg"),
+  require("../../src/puzzle3-3/image13.jpg"),
+  require("../../src/puzzle3-3/image14.jpg"),
+  require("../../src/puzzle3-3/image15.jpg"),
+  require("../../src/puzzle3-3/image16.jpg"),
+  require("../../src/puzzle3-3/image17.jpg"),
+  require("../../src/puzzle3-3/image18.jpg"),
+  require("../../src/puzzle3-3/image19.jpg"),
+  require("../../src/puzzle3-3/image20.jpg"),
+  require("../../src/puzzle3-3/image21.jpg"),
+  require("../../src/puzzle3-3/image22.jpg"),
+  require("../../src/puzzle3-3/image23.jpg"),
+  require("../../src/puzzle3-3/image24.jpg"),
+  require("../../src/puzzle3-3/image25.jpg"),
+  require("../../src/puzzle3-3/image26.jpg"),
+  require("../../src/puzzle3-3/image27.jpg"),
+  require("../../src/puzzle3-3/image28.jpg"),
+  require("../../src/puzzle3-3/image29.jpg"),
+  require("../../src/puzzle3-3/image30.jpg"),
+  require("../../src/puzzle3-3/image31.jpg"),
+  require("../../src/puzzle3-3/image32.jpg"),
+  require("../../src/puzzle3-3/image33.jpg"),
+  require("../../src/puzzle3-3/image34.jpg"),
+  require("../../src/puzzle3-3/image35.jpg"),
 ];
 
 const Game3Level3 = ({ navigation, route }) => {
@@ -116,13 +68,23 @@ const Game3Level3 = ({ navigation, route }) => {
   const { uid } = route.params ?? {};
   const [timer, setTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  
+  const [gameStarted, setGameStarted] = useState(false); // New state variable
+
   const positions = useSharedValue(
     Object.assign(
       {},
       ...imageSources.map((item, index) => ({ [index]: index }))
     )
   );
+
+  // useEffect(() => {
+  //   const setScreenOrientation = async () => {
+  //     await ScreenOrientation.lockAsync(
+  //       ScreenOrientation.OrientationLock.PORTRAIT
+  //     );
+  //   };
+  //   setScreenOrientation();
+  // }, []);
 
   // Lock screen orientation to landscape when screen gains focus
   useEffect(() => {
@@ -198,7 +160,7 @@ const Game3Level3 = ({ navigation, route }) => {
 
   const saveTimingToDatabase = (timing) => {
     if (uid) {
-      const userTimingRef = ref(DATABASE, `users/${uid}/game3level3Time`);
+      const userTimingRef = ref(DATABASE, `users/${uid}/game3level1Time`);
       set(userTimingRef, timing)
         .then(() => console.log("Gameplay timing saved successfully"))
         .catch((error) =>
@@ -210,6 +172,7 @@ const Game3Level3 = ({ navigation, route }) => {
   const handleStartFinishButton = () => {
     if (!isPlaying) {
       setIsPlaying(true);
+      setGameStarted(true); // Update gameStarted state when Start button is clicked
     } else {
       checkPosition();
     }
@@ -229,14 +192,14 @@ const Game3Level3 = ({ navigation, route }) => {
       console.log("All images placed correctly");
       saveTimingToDatabase(timer);
       set(ref(DATABASE, `users/${uid}/game3level3`), "completed");
-      navigation.navigate("NextScreen",{ uid: uid ,  level: "game3level3"});
+      navigation.navigate("NextLevelScreen3",{ uid: uid ,  level: "Game3Level3"});
     } else {
       console.log("Not all images placed correctly");
     }
   };
 
   const navigateToPrices = () => {
-    navigation.navigate("Game3level", { uid: uid,level: "game3level3" });
+    navigation.navigate("game3level", { uid: uid,level: "Game3Level3" });
   };
 
   const memoizedUserData = useMemo(() => userData?.name || "", [userData]);
@@ -252,6 +215,7 @@ const Game3Level3 = ({ navigation, route }) => {
   };
 
   return (
+    // <ScrollView>
     <GestureHandlerRootView style={styles.container}>
       <TouchableOpacity style={styles.arrowButton} onPress={navigateToPrices}>
         <AntDesign name="arrowleft" size={24} color="#003090" />
@@ -269,9 +233,11 @@ const Game3Level3 = ({ navigation, route }) => {
             <Entypo name="stopwatch" size={24} color="#fff" /> {formatTimer()}
           </Text>
         </LinearGradient>
+
+        
       </View>
       <View style={styles.btnContainer} >
-        <LinearGradient
+      <LinearGradient
           start={{ x: 0, y: 0.2 }}
           colors={["#003090", "#3B66CF"]}
           end={{ x: 1, y: 2 }}
@@ -299,8 +265,9 @@ const Game3Level3 = ({ navigation, route }) => {
         {imageSources.map((source, index) => (
           <Draggable
             key={index}
-            positions={positions} 
+            positions={positions}
             id={index}
+            gameStarted={gameStarted} // Conditionally enable dragging
           >
             <Image source={source} style={styles.image} />
           </Draggable>
@@ -308,11 +275,11 @@ const Game3Level3 = ({ navigation, route }) => {
       </View>
       <StatusBar hidden={true} translucent={true} />
     </GestureHandlerRootView>
+    // </ScrollView>
   );
 };
 
 export default Game3Level3;
-
 
 
 const styles = StyleSheet.create({
@@ -325,7 +292,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     // padding: 16,
      marginTop: 10,
-     marginLeft:120,
+     marginLeft:90,
      backgroundColor:'#000'
   },
   backgroundImage: {
@@ -336,13 +303,13 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 50,
-    height: 38,
+    width: 70,
+    height: 68,
     borderColor: "#000",
-    borderWidth: 0.3,
-    padding:0,
-    objectFit:'fill',
-    marginBottom:-20,
+    borderWidth:0.3,
+   padding:0,
+   objectFit:'fill',
+   margin:0,
   },
   buttonContainer: {
     flexDirection: "row",

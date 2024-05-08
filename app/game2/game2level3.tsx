@@ -1,4 +1,3 @@
-// Level2.js
 import React, { useEffect, useState, useMemo } from "react";
 import {
   StyleSheet,
@@ -18,7 +17,7 @@ import { ref, get, set } from "firebase/database";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { DATABASE } from "../../FireBaseConfig";
-import Draggable from "../draggable/draggable2-3";
+import Draggable from "../draggable/draggable2-1";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
 
@@ -60,53 +59,6 @@ const imageSources = [
   require("../../src/puzzle2-3/image33.jpg"),
   require("../../src/puzzle2-3/image34.jpg"),
   require("../../src/puzzle2-3/image35.jpg"),
-  require("../../src/puzzle2-3/image36.jpg"),
-  require("../../src/puzzle2-3/image37.jpg"),
-  require("../../src/puzzle2-3/image38.jpg"),
-  require("../../src/puzzle2-3/image39.jpg"),
-  require("../../src/puzzle2-3/image40.jpg"),
-  require("../../src/puzzle2-3/image41.jpg"),
-  require("../../src/puzzle2-3/image42.jpg"),
-  require("../../src/puzzle2-3/image43.jpg"),
-  require("../../src/puzzle2-3/image44.jpg"),
-  require("../../src/puzzle2-3/image45.jpg"),
-  require("../../src/puzzle2-3/image46.jpg"),
-  require("../../src/puzzle2-3/image47.jpg"),
-  require("../../src/puzzle2-3/image48.jpg"),
-  require("../../src/puzzle2-3/image49.jpg"),
-  require("../../src/puzzle2-3/image50.jpg"),
-  require("../../src/puzzle2-3/image51.jpg"),
-  require("../../src/puzzle2-3/image52.jpg"),
-  require("../../src/puzzle2-3/image53.jpg"),
-  require("../../src/puzzle2-3/image54.jpg"),
-  require("../../src/puzzle2-3/image55.jpg"),
-  require("../../src/puzzle2-3/image56.jpg"),
-  require("../../src/puzzle2-3/image57.jpg"),
-  require("../../src/puzzle2-3/image58.jpg"),
-  require("../../src/puzzle2-3/image59.jpg"),
-  require("../../src/puzzle2-3/image60.jpg"),
-  require("../../src/puzzle2-3/image61.jpg"),
-  require("../../src/puzzle2-3/image62.jpg"),
-  require("../../src/puzzle2-3/image63.jpg"),
-  require("../../src/puzzle2-3/image64.jpg"),
-  require("../../src/puzzle2-3/image65.jpg"),
-  require("../../src/puzzle2-3/image66.jpg"),
-  require("../../src/puzzle2-3/image67.jpg"),
-  require("../../src/puzzle2-3/image68.jpg"),
-  require("../../src/puzzle2-3/image69.jpg"),
-  require("../../src/puzzle2-3/image70.jpg"),
-  require("../../src/puzzle2-3/image71.jpg"),
-  require("../../src/puzzle2-3/image72.jpg"),
-  require("../../src/puzzle2-3/image73.jpg"),
-  require("../../src/puzzle2-3/image74.jpg"),
-  require("../../src/puzzle2-3/image75.jpg"),
-  require("../../src/puzzle2-3/image76.jpg"),
-  require("../../src/puzzle2-3/image77.jpg"),
-  require("../../src/puzzle2-3/image78.jpg"),
-  require("../../src/puzzle2-3/image79.jpg"),
-  require("../../src/puzzle2-3/image80.jpg"),
-  require("../../src/puzzle2-3/image81.jpg"),
-
 ];
 
 const Game2Level3 = ({ navigation, route }) => {
@@ -123,6 +75,15 @@ const Game2Level3 = ({ navigation, route }) => {
       ...imageSources.map((item, index) => ({ [index]: index }))
     )
   );
+
+  // useEffect(() => {
+  //   const setScreenOrientation = async () => {
+  //     await ScreenOrientation.lockAsync(
+  //       ScreenOrientation.OrientationLock.PORTRAIT
+  //     );
+  //   };
+  //   setScreenOrientation();
+  // }, []);
 
   // Lock screen orientation to landscape when screen gains focus
   useEffect(() => {
@@ -229,14 +190,14 @@ const Game2Level3 = ({ navigation, route }) => {
       console.log("All images placed correctly");
       saveTimingToDatabase(timer);
       set(ref(DATABASE, `users/${uid}/game2level3`), "completed");
-      navigation.navigate("NextScreen",{ uid: uid ,  level: "game2level3"});
+      navigation.navigate("NextLevelScreen2",{ uid: uid ,  level: "game2level3"});
     } else {
       console.log("Not all images placed correctly");
     }
   };
 
   const navigateToPrices = () => {
-    navigation.navigate("Game2level", { uid: uid,level: "game2level3" });
+    navigation.navigate("game2level", { uid: uid,level: "game2level3" });
   };
 
   const memoizedUserData = useMemo(() => userData?.name || "", [userData]);
@@ -252,6 +213,7 @@ const Game2Level3 = ({ navigation, route }) => {
   };
 
   return (
+    // <ScrollView>
     <GestureHandlerRootView style={styles.container}>
       <TouchableOpacity style={styles.arrowButton} onPress={navigateToPrices}>
         <AntDesign name="arrowleft" size={24} color="#003090" />
@@ -269,9 +231,11 @@ const Game2Level3 = ({ navigation, route }) => {
             <Entypo name="stopwatch" size={24} color="#fff" /> {formatTimer()}
           </Text>
         </LinearGradient>
+
+        
       </View>
       <View style={styles.btnContainer} >
-        <LinearGradient
+      <LinearGradient
           start={{ x: 0, y: 0.2 }}
           colors={["#003090", "#3B66CF"]}
           end={{ x: 1, y: 2 }}
@@ -299,8 +263,9 @@ const Game2Level3 = ({ navigation, route }) => {
         {imageSources.map((source, index) => (
           <Draggable
             key={index}
-            positions={positions} 
+            positions={positions}
             id={index}
+            draggable={isPlaying} // Conditionally enable dragging
           >
             <Image source={source} style={styles.image} />
           </Draggable>
@@ -308,11 +273,11 @@ const Game2Level3 = ({ navigation, route }) => {
       </View>
       <StatusBar hidden={true} translucent={true} />
     </GestureHandlerRootView>
+    // </ScrollView>
   );
 };
 
 export default Game2Level3;
-
 
 
 const styles = StyleSheet.create({
@@ -325,7 +290,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     // padding: 16,
      marginTop: 10,
-     marginLeft:120,
+     marginLeft:90,
      backgroundColor:'#000'
   },
   backgroundImage: {
@@ -336,13 +301,13 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 50,
-    height: 38,
+    width: 70,
+    height: 68,
     borderColor: "#000",
-    borderWidth: 0.3,
-    padding:0,
-    objectFit:'fill',
-    marginBottom:-20,
+    borderWidth:0.3,
+   padding:0,
+   objectFit:'fill',
+   margin:0,
   },
   buttonContainer: {
     flexDirection: "row",

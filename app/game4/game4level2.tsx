@@ -40,60 +40,7 @@ const imageSources = [
   require("../../src/puzzle4-2/image14.jpg"),
   require("../../src/puzzle4-2/image15.jpg"),
   require("../../src/puzzle4-2/image16.jpg"),
-  require("../../src/puzzle4-2/image17.jpg"),
-  require("../../src/puzzle4-2/image18.jpg"),
-  require("../../src/puzzle4-2/image19.jpg"),
-  require("../../src/puzzle4-2/image20.jpg"),
-  require("../../src/puzzle4-2/image21.jpg"),
-  require("../../src/puzzle4-2/image22.jpg"),
-  require("../../src/puzzle4-2/image23.jpg"),
-  require("../../src/puzzle4-2/image24.jpg"),
-  require("../../src/puzzle4-2/image25.jpg"),
-  require("../../src/puzzle4-2/image26.jpg"),
-  require("../../src/puzzle4-2/image27.jpg"),
-  require("../../src/puzzle4-2/image28.jpg"),
-  require("../../src/puzzle4-2/image29.jpg"),
-  require("../../src/puzzle4-2/image30.jpg"),
-  require("../../src/puzzle4-2/image31.jpg"),
-  require("../../src/puzzle4-2/image32.jpg"),
-  require("../../src/puzzle4-2/image33.jpg"),
-  require("../../src/puzzle4-2/image34.jpg"),
-  require("../../src/puzzle4-2/image35.jpg"),
-  require("../../src/puzzle4-2/image36.jpg"),
-  require("../../src/puzzle4-2/image37.jpg"),
-  require("../../src/puzzle4-2/image38.jpg"),
-  require("../../src/puzzle4-2/image39.jpg"),
-  require("../../src/puzzle4-2/image40.jpg"),
-  require("../../src/puzzle4-2/image41.jpg"),
-  require("../../src/puzzle4-2/image42.jpg"),
-  require("../../src/puzzle4-2/image43.jpg"),
-  require("../../src/puzzle4-2/image44.jpg"),
-  require("../../src/puzzle4-2/image45.jpg"),
-  require("../../src/puzzle4-2/image46.jpg"),
-  require("../../src/puzzle4-2/image47.jpg"),
-  require("../../src/puzzle4-2/image48.jpg"),
-  require("../../src/puzzle4-2/image49.jpg"),
-  require("../../src/puzzle4-2/image50.jpg"),
-  require("../../src/puzzle4-2/image51.jpg"),
-  require("../../src/puzzle4-2/image52.jpg"),
-  require("../../src/puzzle4-2/image53.jpg"),
-  require("../../src/puzzle4-2/image54.jpg"),
-  require("../../src/puzzle4-2/image55.jpg"),
-  require("../../src/puzzle4-2/image56.jpg"),
-  require("../../src/puzzle4-2/image57.jpg"),
-  require("../../src/puzzle4-2/image58.jpg"),
-  require("../../src/puzzle4-2/image59.jpg"),
-  require("../../src/puzzle4-2/image60.jpg"),
-  require("../../src/puzzle4-2/image61.jpg"),
-  require("../../src/puzzle4-2/image62.jpg"),
-  require("../../src/puzzle4-2/image63.jpg"),
-  require("../../src/puzzle4-2/image64.jpg"),
-  require("../../src/puzzle4-2/image65.jpg"),
-  require("../../src/puzzle4-2/image66.jpg"),
-  require("../../src/puzzle4-2/image67.jpg"),
-  require("../../src/puzzle4-2/image68.jpg"),
-  require("../../src/puzzle4-2/image69.jpg"),
-  require("../../src/puzzle4-2/image70.jpg"),
+
 ];
 
 const Game4Level2 = ({ navigation, route }) => {
@@ -103,7 +50,8 @@ const Game4Level2 = ({ navigation, route }) => {
   const { uid } = route.params ?? {};
   const [timer, setTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  
+  const [gameStarted, setGameStarted] = useState(false);
+
   const positions = useSharedValue(
     Object.assign(
       {},
@@ -206,6 +154,7 @@ const Game4Level2 = ({ navigation, route }) => {
   const handleStartFinishButton = () => {
     if (!isPlaying) {
       setIsPlaying(true);
+      setGameStarted(true); // Update gameStarted state when Start button is clicked
     } else {
       checkPosition();
     }
@@ -225,14 +174,14 @@ const Game4Level2 = ({ navigation, route }) => {
       console.log("All images placed correctly");
       saveTimingToDatabase(timer);
       set(ref(DATABASE, `users/${uid}/game4level2`), "completed");
-      navigation.navigate("NextScreen",{ uid: uid ,  level: "Game4Level2"});
+      navigation.navigate("NextLevelScreen4",{ uid: uid ,  level: "game4level2"});
     } else {
       console.log("Not all images placed correctly");
     }
   };
 
   const navigateToPrices = () => {
-    navigation.navigate("Game4level", { uid: uid,level: "Game4Level2" });
+    navigation.navigate("game4level", { uid: uid,level: "game4level2" });
   };
 
   const memoizedUserData = useMemo(() => userData?.name || "", [userData]);
@@ -300,6 +249,7 @@ const Game4Level2 = ({ navigation, route }) => {
             key={index}
             positions={positions}
             id={index}
+            gameStarted={gameStarted} 
             draggable={isPlaying} // Conditionally enable dragging
           >
             <Image source={source} style={styles.image} />
@@ -325,7 +275,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     // padding: 16,
      marginTop: 110,
-     marginLeft:10,
+     marginLeft:20,
      backgroundColor:'#000'
   },
   backgroundImage: {
@@ -336,8 +286,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 48,
-    height: 50,
+    width: 80,
+    height: 120,
     borderColor: "#000",
     borderWidth:0.3,
     padding:0,

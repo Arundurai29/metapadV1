@@ -33,25 +33,6 @@ const imageSources = [
   require("../../src/puzzle4-1/image7.jpg"),
   require("../../src/puzzle4-1/image8.jpg"),
   require("../../src/puzzle4-1/image9.jpg"),
-  require("../../src/puzzle4-1/image10.jpg"),
-  require("../../src/puzzle4-1/image11.jpg"),
-  require("../../src/puzzle4-1/image12.jpg"),
-  require("../../src/puzzle4-1/image13.jpg"),
-  require("../../src/puzzle4-1/image14.jpg"),
-  require("../../src/puzzle4-1/image15.jpg"),
-  require("../../src/puzzle4-1/image16.jpg"),
-  require("../../src/puzzle4-1/image17.jpg"),
-  require("../../src/puzzle4-1/image18.jpg"),
-  require("../../src/puzzle4-1/image19.jpg"),
-  require("../../src/puzzle4-1/image20.jpg"),
-  require("../../src/puzzle4-1/image21.jpg"),
-  require("../../src/puzzle4-1/image22.jpg"),
-  require("../../src/puzzle4-1/image23.jpg"),
-  require("../../src/puzzle4-1/image24.jpg"),
-  require("../../src/puzzle4-1/image25.jpg"),
-  require("../../src/puzzle4-1/image26.jpg"),
-  require("../../src/puzzle4-1/image27.jpg"),
-  require("../../src/puzzle4-1/image28.jpg"),
 ];
 
 const Game4Level1 = ({ navigation, route }) => {
@@ -61,7 +42,8 @@ const Game4Level1 = ({ navigation, route }) => {
   const { uid } = route.params ?? {};
   const [timer, setTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  
+  const [gameStarted, setGameStarted] = useState(false);
+
   const positions = useSharedValue(
     Object.assign(
       {},
@@ -161,9 +143,10 @@ const Game4Level1 = ({ navigation, route }) => {
     }
   };
 
-  const handleStartFinishButton = () => {
+ const handleStartFinishButton = () => {
     if (!isPlaying) {
       setIsPlaying(true);
+      setGameStarted(true); // Update gameStarted state when Start button is clicked
     } else {
       checkPosition();
     }
@@ -183,14 +166,14 @@ const Game4Level1 = ({ navigation, route }) => {
       console.log("All images placed correctly");
       saveTimingToDatabase(timer);
       set(ref(DATABASE, `users/${uid}/game4level1`), "completed");
-      navigation.navigate("NextScreen",{ uid: uid ,  level: "Game4Level1"});
+      navigation.navigate("NextLevelScreen4",{ uid: uid ,  level: "game4level1"});
     } else {
       console.log("Not all images placed correctly");
     }
   };
 
   const navigateToPrices = () => {
-    navigation.navigate("Game4level", { uid: uid,level: "Game4Level1" });
+    navigation.navigate("game4level", { uid: uid,level: "game4level1" });
   };
 
   const memoizedUserData = useMemo(() => userData?.name || "", [userData]);
@@ -258,6 +241,7 @@ const Game4Level1 = ({ navigation, route }) => {
             key={index}
             positions={positions}
             id={index}
+            gameStarted={gameStarted} 
             draggable={isPlaying} // Conditionally enable dragging
           >
             <Image source={source} style={styles.image} />
@@ -282,8 +266,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     // padding: 16,
-     marginTop: 110,
-     marginLeft:20,
+     marginTop: 160,
+     marginLeft:30,
      backgroundColor:'#000'
   },
   backgroundImage: {
@@ -294,8 +278,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 80,
-    height: 80,
+    width: 100,
+    height: 160,
     borderColor: "#000",
     borderWidth:0.3,
     padding:0,

@@ -1,4 +1,3 @@
-// Level2.js
 import React, { useEffect, useState, useMemo } from "react";
 import {
   StyleSheet,
@@ -18,10 +17,9 @@ import { ref, get, set } from "firebase/database";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { DATABASE } from "../../FireBaseConfig";
-import Draggable from "../draggable/draggable2-2";
+import Draggable from "../draggable/draggable1-2";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
-import { MARGIN, SIZE,SIZE2 } from '../utils/utils1';
 
 const glass = require("../../assets/images/glass.png");
 const backgroundImage = require("../../src/imgpanda.png");
@@ -42,51 +40,6 @@ const imageSources = [
   require("../../src/puzzle2-2/image14.jpg"),
   require("../../src/puzzle2-2/image15.jpg"),
   require("../../src/puzzle2-2/image16.jpg"),
-  require("../../src/puzzle2-2/image17.jpg"),
-  require("../../src/puzzle2-2/image18.jpg"),
-  require("../../src/puzzle2-2/image19.jpg"),
-  require("../../src/puzzle2-2/image20.jpg"),
-  require("../../src/puzzle2-2/image21.jpg"),
-  require("../../src/puzzle2-2/image22.jpg"),
-  require("../../src/puzzle2-2/image23.jpg"),
-  require("../../src/puzzle2-2/image24.jpg"),
-  require("../../src/puzzle2-2/image25.jpg"),
-  require("../../src/puzzle2-2/image26.jpg"),
-  require("../../src/puzzle2-2/image27.jpg"),
-  require("../../src/puzzle2-2/image28.jpg"),
-  require("../../src/puzzle2-2/image29.jpg"),
-  require("../../src/puzzle2-2/image30.jpg"),
-  require("../../src/puzzle2-2/image31.jpg"),
-  require("../../src/puzzle2-2/image32.jpg"),
-  require("../../src/puzzle2-2/image33.jpg"),
-  require("../../src/puzzle2-2/image34.jpg"),
-  require("../../src/puzzle2-2/image35.jpg"),
-  require("../../src/puzzle2-2/image36.jpg"),
-  require("../../src/puzzle2-2/image37.jpg"),
-  require("../../src/puzzle2-2/image38.jpg"),
-  require("../../src/puzzle2-2/image39.jpg"),
-  require("../../src/puzzle2-2/image40.jpg"),
-  require("../../src/puzzle2-2/image41.jpg"),
-  require("../../src/puzzle2-2/image42.jpg"),
-  require("../../src/puzzle2-2/image43.jpg"),
-  require("../../src/puzzle2-2/image44.jpg"),
-  require("../../src/puzzle2-2/image45.jpg"),
-  require("../../src/puzzle2-2/image46.jpg"),
-  require("../../src/puzzle2-2/image47.jpg"),
-  require("../../src/puzzle2-2/image48.jpg"),
-  require("../../src/puzzle2-2/image49.jpg"),
-  require("../../src/puzzle2-2/image50.jpg"),
-  require("../../src/puzzle2-2/image51.jpg"),
-  require("../../src/puzzle2-2/image52.jpg"),
-  require("../../src/puzzle2-2/image53.jpg"),
-  require("../../src/puzzle2-2/image54.jpg"),
-  require("../../src/puzzle2-2/image55.jpg"),
-  require("../../src/puzzle2-2/image56.jpg"),
-  require("../../src/puzzle2-2/image57.jpg"),
-  require("../../src/puzzle2-2/image58.jpg"),
-  require("../../src/puzzle2-2/image59.jpg"),
-  require("../../src/puzzle2-2/image60.jpg"),
-
 ];
 
 const Game2Level2 = ({ navigation, route }) => {
@@ -96,7 +49,8 @@ const Game2Level2 = ({ navigation, route }) => {
   const { uid } = route.params ?? {};
   const [timer, setTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  
+  const [gameStarted, setGameStarted] = useState(false); // New state variable
+
   const positions = useSharedValue(
     Object.assign(
       {},
@@ -190,6 +144,7 @@ const Game2Level2 = ({ navigation, route }) => {
   const handleStartFinishButton = () => {
     if (!isPlaying) {
       setIsPlaying(true);
+      setGameStarted(true); // Update gameStarted state when Start button is clicked
     } else {
       checkPosition();
     }
@@ -209,14 +164,14 @@ const Game2Level2 = ({ navigation, route }) => {
       console.log("All images placed correctly");
       saveTimingToDatabase(timer);
       set(ref(DATABASE, `users/${uid}/game2level2`), "completed");
-      navigation.navigate("NextScreen",{ uid: uid ,  level: "game2level2"});
+      navigation.navigate("NextLevelScreen2",{ uid: uid ,  level: "game2level2"});
     } else {
       console.log("Not all images placed correctly");
     }
   };
 
   const navigateToPrices = () => {
-    navigation.navigate("Game2level", { uid: uid,level: "game2level2" });
+    navigation.navigate("game2level", { uid: uid,level: "game2level2" });
   };
 
   const memoizedUserData = useMemo(() => userData?.name || "", [userData]);
@@ -281,6 +236,7 @@ const Game2Level2 = ({ navigation, route }) => {
             key={index}
             positions={positions} 
             id={index}
+            gameStarted={gameStarted} // Pass gameStarted prop
           >
             <Image source={source} style={styles.image} />
           </Draggable>
@@ -294,7 +250,6 @@ const Game2Level2 = ({ navigation, route }) => {
 export default Game2Level2;
 
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -305,7 +260,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     // padding: 16,
      marginTop: 13,
-     marginLeft:75,
+     marginLeft:120,
      backgroundColor:'#000'
   },
   backgroundImage: {
@@ -316,8 +271,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 45,
-    height: 67,
+    width: 120,
+    height: 80,
     borderColor: "#000",
     borderWidth: 0.3,
     padding:0,

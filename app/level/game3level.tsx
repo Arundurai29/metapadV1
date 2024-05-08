@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -11,7 +11,9 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  Animated,
   ScrollView,
+  Modal,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
@@ -22,6 +24,7 @@ import { StatusBar } from 'expo-status-bar';
 const doctor1 = require("../../assets/images/doctor3.png");
 const doctor2 = require("../../assets/images/doctor4.png");
 const login_bg = require("../../src/imgpanda.png");
+const originalImage = require("../../assets/images/puzzle3.jpg");
 
 type RootStackParamList = {
   Home: { uid?: string };
@@ -34,6 +37,9 @@ const Game3level: React.FC<{
 }> = ({ route }) => {
   const navigation = useNavigation();
   const { uid,level } = route.params ?? {};
+  const [modalVisible, setModalVisible] = useState(false);
+  const [hasShownPopup, setHasShownPopup] = useState(false);
+  const scaleValue = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
     const lockScreenOrientation = async () => {
@@ -42,17 +48,33 @@ const Game3level: React.FC<{
       );
     };
     const unsubscribe = navigation.addListener("focus", lockScreenOrientation);
-
+    openModal();
     return unsubscribe;
   }, [navigation]);
 
-  
+  const openModal = () => {
+    Animated.timing(scaleValue, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    Animated.timing(scaleValue, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+    setTimeout(() => setModalVisible(false), 300);
+  };
 
   const navigateToPrices = async () => {
     // await ScreenOrientation.lockAsync(
     //   ScreenOrientation.OrientationLock.PORTRAIT
     // );
-    navigation.navigate("game3Levels", { uid: uid });
+    navigation.navigate("game3levels", { uid: uid });
   };
 
   return (
@@ -74,13 +96,12 @@ const Game3level: React.FC<{
           <View style={styles.levels}>
             <View>
               <Text style={styles.level}>{level}</Text>
-              <Image
-                style={styles.puzzleBtn}
-                source={require("../../assets/images/puzzle3.jpg")}
-              />
+              <TouchableOpacity onPress={openModal}>
+                <Image style={styles.puzzleBtn} source={originalImage} />
+              </TouchableOpacity>
             </View>
             <View style={styles.titles}>
-              <Text style={styles.head}>Glycogen Puzzle</Text>
+              <Text style={styles.head}>Gluconeogenesis</Text>
             </View>
             <TouchableOpacity
               style={styles.puzzleBtns}
@@ -97,6 +118,34 @@ const Game3level: React.FC<{
           <Image source={doctor2} style={styles.doctor_img} />
         </View>
       </ImageBackground>
+      
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={closeModal}
+      >
+        <TouchableOpacity
+          style={styles.modalContainer}
+          activeOpacity={1}
+          onPress={closeModal}
+        >
+          <Animated.View
+            style={[styles.popup, { transform: [{ scale: scaleValue }] }]}
+          >
+            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+              <AntDesign name="close" size={24} color="#fff" />
+            </TouchableOpacity>
+            <Image style={styles.modalImage} source={originalImage} />
+            <TouchableOpacity
+              style={styles.viewmore}
+              onPress={() => navigation.navigate("MetaBites3", { uid: uid,level })}
+            >
+              <Text style={styles.view}>View More</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </TouchableOpacity>
+      </Modal>
     </ScrollView>
   );
 };
@@ -107,7 +156,8 @@ const styles = StyleSheet.create({
     padding: 40,
     backgroundColor: "#fff",
     justifyContent: "center",
-    paddingTop:70,
+    paddingTop: 50,
+    paddingBottom:60,
   },
   level_section: {
     flex: 1,
@@ -134,6 +184,7 @@ const styles = StyleSheet.create({
     borderWidth: 6,
     objectFit: "contain",
     borderColor: "#003090",
+    backgroundColor:'#fff',
   },
   puzzleBtns: {
     alignItems: "center",
@@ -142,6 +193,18 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginTop: 10,
     width: "auto",
+  },
+  viewmore: {
+    alignItems: "center",
+    borderRadius: 20,
+    backgroundColor: "#003090",
+    paddingVertical: 5,
+    paddingHorizontal: 12,
+    marginTop: 10,
+    width: "auto",
+  },
+  view: {
+    color: "#fff",
   },
   pb50: {
     paddingBottom: 50,
@@ -163,8 +226,8 @@ const styles = StyleSheet.create({
     transform: [{ rotate: "-90deg" }],
     objectFit: "contain",
   },
-  pBtnHead:{
-    color:'#fff',
+  pBtnHead: {
+    color: "#fff",
   },
   level: {
     position: "absolute",
@@ -182,9 +245,34 @@ const styles = StyleSheet.create({
     top: 20,
     left: 20,
     zIndex: 999,
-    backgroundColor:'#fff',
-    padding:10,
-    borderRadius:10,
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  popup: {
+    // backgroundColor: "#fff",
+    borderRadius: 10,
+    padding: 0,
+
+    alignItems: "center",
+  },
+  closeButton: {
+    position: "absolute",
+    top: 10,
+    right: -40,
+
+    zIndex: 1,
+  },
+  modalImage: {
+    width: 600,
+    height: 300,
+    marginTop: -40,
+    objectFit: "contain",
   },
 });
 

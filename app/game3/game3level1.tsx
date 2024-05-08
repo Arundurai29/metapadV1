@@ -17,7 +17,7 @@ import { ref, get, set } from "firebase/database";
 import { Entypo } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { DATABASE } from "../../FireBaseConfig";
-import Draggable from "../draggable/draggable2-1";
+import Draggable from "../draggable/draggable1-1";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
 
@@ -33,32 +33,6 @@ const imageSources = [
   require("../../src/puzzle3-1/image7.jpg"),
   require("../../src/puzzle3-1/image8.jpg"),
   require("../../src/puzzle3-1/image9.jpg"),
-  require("../../src/puzzle3-1/image10.jpg"),
-  require("../../src/puzzle3-1/image11.jpg"),
-  require("../../src/puzzle3-1/image12.jpg"),
-  require("../../src/puzzle3-1/image13.jpg"),
-  require("../../src/puzzle3-1/image14.jpg"),
-  require("../../src/puzzle3-1/image15.jpg"),
-  require("../../src/puzzle3-1/image16.jpg"),
-  require("../../src/puzzle3-1/image17.jpg"),
-  require("../../src/puzzle3-1/image18.jpg"),
-  require("../../src/puzzle3-1/image19.jpg"),
-  require("../../src/puzzle3-1/image20.jpg"),
-  require("../../src/puzzle3-1/image21.jpg"),
-  require("../../src/puzzle3-1/image22.jpg"),
-  require("../../src/puzzle3-1/image23.jpg"),
-  require("../../src/puzzle3-1/image24.jpg"),
-  require("../../src/puzzle3-1/image25.jpg"),
-  require("../../src/puzzle3-1/image26.jpg"),
-  require("../../src/puzzle3-1/image27.jpg"),
-  require("../../src/puzzle3-1/image28.jpg"),
-  require("../../src/puzzle3-1/image29.jpg"),
-  require("../../src/puzzle3-1/image30.jpg"),
-  require("../../src/puzzle3-1/image31.jpg"),
-  require("../../src/puzzle3-1/image32.jpg"),
-  require("../../src/puzzle3-1/image33.jpg"),
-  require("../../src/puzzle3-1/image34.jpg"),
-  require("../../src/puzzle3-1/image35.jpg"),
 ];
 
 const Game3Level1 = ({ navigation, route }) => {
@@ -68,22 +42,14 @@ const Game3Level1 = ({ navigation, route }) => {
   const { uid } = route.params ?? {};
   const [timer, setTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  
+  const [gameStarted, setGameStarted] = useState(false); // New state variable
+
   const positions = useSharedValue(
     Object.assign(
       {},
       ...imageSources.map((item, index) => ({ [index]: index }))
     )
   );
-
-  // useEffect(() => {
-  //   const setScreenOrientation = async () => {
-  //     await ScreenOrientation.lockAsync(
-  //       ScreenOrientation.OrientationLock.PORTRAIT
-  //     );
-  //   };
-  //   setScreenOrientation();
-  // }, []);
 
   // Lock screen orientation to landscape when screen gains focus
   useEffect(() => {
@@ -167,10 +133,11 @@ const Game3Level1 = ({ navigation, route }) => {
         );
     }
   };
-
+  
   const handleStartFinishButton = () => {
     if (!isPlaying) {
       setIsPlaying(true);
+      setGameStarted(true); // Update gameStarted state when Start button is clicked
     } else {
       checkPosition();
     }
@@ -190,15 +157,16 @@ const Game3Level1 = ({ navigation, route }) => {
       console.log("All images placed correctly");
       saveTimingToDatabase(timer);
       set(ref(DATABASE, `users/${uid}/game3level1`), "completed");
-      navigation.navigate("NextScreen",{ uid: uid ,  level: "Game3Level1"});
+      navigation.navigate("NextLevelScreen3",{ uid: uid ,  level: "game3level1"});
     } else {
       console.log("Not all images placed correctly");
     }
   };
 
   const navigateToPrices = () => {
-    navigation.navigate("Game3level", { uid: uid,level: "Game3Level1" });
+    navigation.navigate("game3level", { uid: uid,level: "game3level1" });
   };
+
 
   const memoizedUserData = useMemo(() => userData?.name || "", [userData]);
 
@@ -213,7 +181,6 @@ const Game3Level1 = ({ navigation, route }) => {
   };
 
   return (
-    // <ScrollView>
     <GestureHandlerRootView style={styles.container}>
       <TouchableOpacity style={styles.arrowButton} onPress={navigateToPrices}>
         <AntDesign name="arrowleft" size={24} color="#003090" />
@@ -231,11 +198,9 @@ const Game3Level1 = ({ navigation, route }) => {
             <Entypo name="stopwatch" size={24} color="#fff" /> {formatTimer()}
           </Text>
         </LinearGradient>
-
-        
       </View>
       <View style={styles.btnContainer} >
-      <LinearGradient
+        <LinearGradient
           start={{ x: 0, y: 0.2 }}
           colors={["#003090", "#3B66CF"]}
           end={{ x: 1, y: 2 }}
@@ -263,9 +228,9 @@ const Game3Level1 = ({ navigation, route }) => {
         {imageSources.map((source, index) => (
           <Draggable
             key={index}
-            positions={positions}
+            positions={positions} 
             id={index}
-            draggable={isPlaying} // Conditionally enable dragging
+            gameStarted={gameStarted} // Pass gameStarted prop
           >
             <Image source={source} style={styles.image} />
           </Draggable>
@@ -273,7 +238,6 @@ const Game3Level1 = ({ navigation, route }) => {
       </View>
       <StatusBar hidden={true} translucent={true} />
     </GestureHandlerRootView>
-    // </ScrollView>
   );
 };
 
@@ -289,8 +253,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     // padding: 16,
-     marginTop: 10,
-     marginLeft:90,
+     marginTop: 13,
+     marginLeft:120,
      backgroundColor:'#000'
   },
   backgroundImage: {
@@ -301,13 +265,13 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 70,
-    height: 68,
+    width: 150,
+    height: 110,
     borderColor: "#000",
-    borderWidth:0.3,
-   padding:0,
-   objectFit:'fill',
-   margin:0,
+    borderWidth: 0.3,
+    padding:0,
+    objectFit:'fill',
+    marginBottom:-20,
   },
   buttonContainer: {
     flexDirection: "row",
