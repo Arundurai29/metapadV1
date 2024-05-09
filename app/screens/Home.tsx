@@ -146,7 +146,7 @@ const Home: React.FC<{
             <Image
               style={styles.puzzleBtn}
               resizeMode="contain"
-              source={require("../../assets/images/originalImage.png")}
+              source={require("../../assets/images/originalImage.jpg")}
             />
             <View style={styles.playBtns}>
               <View>

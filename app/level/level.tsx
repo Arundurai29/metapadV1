@@ -24,7 +24,7 @@ import MetaBites from "../metabites/metaBites";
 const doctor1 = require("../../assets/images/doctor3.png");
 const doctor2 = require("../../assets/images/doctor4.png");
 const login_bg = require("../../src/imgpanda.png");
-const originalImage = require("../../assets/images/originalImage.png");
+const originalImage = require("../../assets/images/originalImage.jpg");
 
 type RootStackParamList = {
   Home: { uid?: string };
