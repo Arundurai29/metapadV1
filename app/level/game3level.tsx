@@ -19,7 +19,8 @@ import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
-
+import SoundButton from "../screens/SoundButton";
+import ImageViewer from "react-native-image-zoom-viewer";
 
 const doctor1 = require("../../assets/images/doctor3.png");
 const doctor2 = require("../../assets/images/doctor4.png");
@@ -70,6 +71,15 @@ const Game3level: React.FC<{
     setTimeout(() => setModalVisible(false), 300);
   };
 
+  const images = [
+    {
+      url: '', 
+      props: {
+        source: originalImage
+      }
+    }
+  ];
+
   const navigateToPrices = async () => {
     // await ScreenOrientation.lockAsync(
     //   ScreenOrientation.OrientationLock.PORTRAIT
@@ -85,35 +95,32 @@ const Game3level: React.FC<{
         resizeMode="cover"
         style={styles.container}
       >
-        <TouchableOpacity
-          style={styles.arrowButton}
-          onPress={navigateToPrices}
-        >
-          <AntDesign name="arrowleft" size={24} color="#003090" />
-        </TouchableOpacity>
+       <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={navigateToPrices}
+        style={styles.arrowButton}
+      >
+        <AntDesign name="arrowleft" size={24} color="black" />
+      </SoundButton>
         <View style={styles.level_section}>
           <Image source={doctor1} style={styles.doctor_img} />
           <View style={styles.levels}>
             <View>
-              <Text style={styles.level}>{level}</Text>
+              <Text style={styles.level}>{level.substr(-6)}</Text>
               <TouchableOpacity onPress={openModal}>
                 <Image style={styles.puzzleBtn} source={originalImage} />
               </TouchableOpacity>
             </View>
             <View style={styles.titles}>
-              <Text style={styles.head}>Gluconeogenesis</Text>
+              <Text style={styles.head}>Glycogen Metabolism</Text>
             </View>
-            <TouchableOpacity
-              style={styles.puzzleBtns}
-              onPress={() => navigation.navigate(level, { uid: uid })}
-            >
-              <View style={styles.playBtns}>
-                <View>
-                  <Text style={styles.pBtnHead}>Start To Play</Text>
-                </View>
-                <AntDesign name="caretright" size={15} color="#fff" />
-              </View>
-            </TouchableOpacity>
+            <SoundButton
+        soundPath={require('../../src/sound.mp3')} // Update with your sound file path
+        onPress={() => navigation.navigate(level, { uid })}
+        style={styles.puzzleBtns}
+      >
+        <Text style={styles.pBtnHead}>Start To Play</Text>
+      </SoundButton>
           </View>
           <Image source={doctor2} style={styles.doctor_img} />
         </View>
@@ -136,13 +143,14 @@ const Game3level: React.FC<{
             <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
               <AntDesign name="close" size={24} color="#fff" />
             </TouchableOpacity>
-            <Image style={styles.modalImage} source={originalImage} />
-            <TouchableOpacity
-              style={styles.viewmore}
-              onPress={() => navigation.navigate("MetaBites3", { uid: uid,level })}
-            >
-              <Text style={styles.view}>View More</Text>
-            </TouchableOpacity>
+           <ImageViewer style={styles.modalImage}  backgroundColor="transparent" imageUrls={images} enableSwipeDown={true} onSwipeDown={closeModal} />
+            <SoundButton
+        title="View More"
+        soundPath={require('../../src/sound.mp3')}
+        onPress={() => navigation.navigate("MetaBites3", { uid: uid,level })}
+        style={styles.viewmore}
+        textStyle={styles.view}
+      />
           </Animated.View>
         </TouchableOpacity>
       </Modal>
@@ -236,9 +244,10 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 8,
     zIndex: 3,
-    marginLeft: "30%",
+    marginLeft: "40%",
     marginTop: -10,
     textAlign: "center",
+    textTransform:'capitalize',
   },
   arrowButton: {
     position: "absolute",

@@ -20,6 +20,8 @@ import { AntDesign } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
 import MetaBites from "../metabites/metaBites";
+import ImageViewer from "react-native-image-zoom-viewer";
+import SoundButton from "../screens/SoundButton";
 
 const doctor1 = require("../../assets/images/doctor3.png");
 const doctor2 = require("../../assets/images/doctor4.png");
@@ -65,6 +67,15 @@ const Level: React.FC<{
     setModalVisible(true);
   };
 
+  const images = [
+    {
+      url: '', 
+      props: {
+        source: originalImage
+      }
+    }
+  ];
+
   const closeModal = () => {
     Animated.timing(scaleValue, {
       toValue: 0,
@@ -82,14 +93,18 @@ const Level: React.FC<{
         resizeMode="cover"
         style={styles.container}
       >
-        <TouchableOpacity style={styles.arrowButton} onPress={navigateToPrices}>
-          <AntDesign name="arrowleft" size={24} color="#003090" />
-        </TouchableOpacity>
+        <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={navigateToPrices}
+        style={styles.arrowButton}
+      >
+        <AntDesign name="arrowleft" size={24} color="black" />
+      </SoundButton>
         <View style={styles.level_section}>
           <Image source={doctor1} style={styles.doctor_img} />
           <View style={styles.levels}>
             <View>
-              <Text style={styles.level}>{level}</Text>
+              <Text style={styles.level}>{level.substr(-6)}</Text>
               <TouchableOpacity onPress={openModal}>
                 <Image style={styles.puzzleBtn} source={originalImage} />
               </TouchableOpacity>
@@ -97,17 +112,13 @@ const Level: React.FC<{
             <View style={styles.titles}>
               <Text style={styles.head}>Electron Transport Chain</Text>
             </View>
-            <TouchableOpacity
-              style={styles.puzzleBtns}
-              onPress={() => navigation.navigate(level, { uid: uid })}
-            >
-              <View style={styles.playBtns}>
-                <View>
-                  <Text style={styles.pBtnHead}>Start To Play</Text>
-                </View>
-                <AntDesign name="caretright" size={15} color="#fff" />
-              </View>
-            </TouchableOpacity>
+            <SoundButton
+        soundPath={require('../../src/sound.mp3')} // Update with your sound file path
+        onPress={() => navigation.navigate(level, { uid })}
+        style={styles.puzzleBtns}
+      >
+        <Text style={styles.pBtnHead}>Start To Play</Text>
+      </SoundButton>
           </View>
           <Image source={doctor2} style={styles.doctor_img} />
         </View>
@@ -129,14 +140,15 @@ const Level: React.FC<{
           >
             <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
               <AntDesign name="close" size={24} color="#fff" />
-            </TouchableOpacity>
-            <Image style={styles.modalImage} source={originalImage} />
-            <TouchableOpacity
-              style={styles.viewmore}
-              onPress={() => navigation.navigate("MetaBites", { uid: uid,level })}
-            >
-              <Text style={styles.view}>View More</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> 
+            <ImageViewer style={styles.modalImage}  backgroundColor="transparent" imageUrls={images} enableSwipeDown={true} onSwipeDown={closeModal} />
+            <SoundButton
+        title="View More"
+        soundPath={require('../../src/sound.mp3')}
+        onPress={() => navigation.navigate("MetaBites", { uid: uid,level })}
+        style={styles.viewmore}
+        textStyle={styles.view}
+      />
           </Animated.View>
         </TouchableOpacity>
       </Modal>
@@ -229,9 +241,10 @@ const styles = StyleSheet.create({
     padding: 5,
     borderRadius: 8,
     zIndex: 3,
-    marginLeft: "30%",
+    marginLeft: "40%",
     marginTop: -10,
     textAlign: "center",
+    textTransform:'capitalize',
   },
   arrowButton: {
     position: "absolute",
@@ -248,7 +261,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   popup: {
-    // backgroundColor: "#fff",
+    backgroundColor: "transparent",
     borderRadius: 10,
     padding: 0,
 
@@ -264,8 +277,9 @@ const styles = StyleSheet.create({
   modalImage: {
     width: 600,
     height: 300,
-    marginTop: -40,
-    objectFit: "contain",
+    marginTop: -20,
+    objectFit: "cover",
+    backgroundColor:'#fff',
   },
 });
 

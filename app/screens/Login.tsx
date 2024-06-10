@@ -24,6 +24,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ScreenOrientation from 'expo-screen-orientation'
 import { StatusBar } from 'expo-status-bar';
 import SoundButton from './SoundButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { sendPasswordResetEmail } from 'firebase/auth';
 
 const logo = require("../../assets/images/metapad.png");
 const login_bg = require("../../assets/images/login-bg.png");
@@ -46,7 +48,40 @@ const LoginScreen: React.FC<{
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const auth = FIREBASE_AUTH;
+  
 
+  const login = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log('User logged in:', userCredential.user.uid);
+
+      await AsyncStorage.setItem('userCredential', JSON.stringify(userCredential.user));
+      await AsyncStorage.setItem('uid', userCredential.user.uid);
+
+
+      navigation.navigate('Welcome', { uid: userCredential.user.uid});
+
+    } catch (error) {
+      console.error('Error logging in:', error);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      alert('Please enter your email address');
+      return;
+    }
+  
+    try {
+      await sendPasswordResetEmail(auth, email);
+      alert('Password reset email sent! Check your Email inbox.');
+    } catch (error) {
+      console.error('Error sending password reset email:', error);
+      alert('Error sending password reset email');
+    }
+  };
+  
+  
   const goToSignUp = () => {
     navigation.navigate('SignUp');
   };
@@ -74,17 +109,7 @@ const LoginScreen: React.FC<{
       unlockScreenOrientation();
     };
   }, []);
-
-  const login = async () => {
-    setLoading(true);
-    try {
-      const response = await signInWithEmailAndPassword(auth, email, password);
-      navigation.navigate('Home', { uid: response.user.uid });
-    } catch (error) {
-      console.log(error);
-      alert('Login failed: ' + error.message);
-    } 
-  };
+  
   const [isLoaded] = useFonts({
     "pop-mid": require("../../assets/fonts/Poppins-Medium.ttf"),
     "pop-reg": require("../../assets/fonts/Poppins-Regular.ttf"),
@@ -139,9 +164,14 @@ been missed!</Text>
             onFocus={() => setFocusedPassword(true)}
             onBlur={() => setFocusedPassword(false)}
           />
-          <TouchableOpacity >
-                <Text style={styles.forgot}>Forgot your password?</Text>
-              </TouchableOpacity>
+       
+<SoundButton
+        title="Forgot your password?"
+        soundPath={require('../../src/sound.mp3')}
+        onPress={handleForgotPassword}
+        style={styles}
+        textStyle={styles.forgot} 
+      />
         
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
@@ -159,7 +189,7 @@ been missed!</Text>
         soundPath={require('../../src/sound.mp3')}
         onPress={login}
         style={styles.button}
-        textStyle={styles.login} // Use the same style as the button
+        textStyle={styles.login} 
       />
               </LinearGradient>
               <SoundButton
@@ -167,7 +197,7 @@ been missed!</Text>
         soundPath={require('../../src/sound.mp3')}
         onPress={goToSignUp}
         style={styles}
-        textStyle={styles.new} // Use the same style as the button
+        textStyle={styles.new} 
       />
              
             </View>

@@ -14,6 +14,9 @@ import { FontAwesome } from "@expo/vector-icons";
 import { DATABASE } from "../../FireBaseConfig";
 import { Entypo } from "@expo/vector-icons";
 import { Foundation } from "@expo/vector-icons";
+import { Audio } from 'expo-av';
+import { useIsFocused } from '@react-navigation/native';
+import SoundButton from "../screens/SoundButton";
 
 const login_bg = require("../../assets/images/win.png");
 const imageSources = [
@@ -25,6 +28,34 @@ const NextPage = ({ navigation, route }) => {
   const { uid, level, } = route.params ?? {};
   const [users, setUsers] = useState([]);
   const [currentLevel, setCurrentLevel] = useState(level);
+  const isFocused = useIsFocused();
+  
+  useEffect(() => {
+    let sound: Audio.Sound | undefined;
+
+    const playSound = async () => {
+      try {
+        const { sound: soundObject } = await Audio.Sound.createAsync(
+          require('../../src/win.mp3')
+        );
+        sound = soundObject;
+        await sound.playAsync();
+      } catch (error) {
+        console.error('Failed to play sound', error);
+      }
+    };
+
+    if (isFocused) {
+      playSound();
+    }
+
+    return () => {
+      if (sound) {
+        sound.stopAsync();
+        sound.unloadAsync();
+      }
+    };
+  }, [isFocused]);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -127,7 +158,8 @@ const NextPage = ({ navigation, route }) => {
               style={styles.winsim}
             />
           </View>
-          <Text style={styles.complete}>Completed</Text>
+          <Text style={styles.complete}>Completed {level.substr(-6)}
+          </Text>
           <View style={styles.imagetext}>
                   <Entypo name="stopwatch" size={24} color="#003090" />
                   <Text style={styles.timeText}>
@@ -137,28 +169,31 @@ const NextPage = ({ navigation, route }) => {
       </Text>
                 </View>
           <View style={styles.buttonsContainer}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate(level, { uid: uid })}
-              style={styles.button}
-            >
-              <Foundation name="refresh" size={24} color="#003090" />
-            </TouchableOpacity>
-            {level !== "game3level5" && (
-              <TouchableOpacity
-                onPress={navigateToNextLevel}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>Next Level</Text>
-              </TouchableOpacity>
-            )}
-            {level === "game3level5" && (
-              <TouchableOpacity
-                onPress={navigateToNextGame}
-                style={styles.button}
-              >
-                <Text style={styles.buttonText}>Next Game</Text>
-              </TouchableOpacity>
-            )}
+          <SoundButton
+          soundPath={require('../../src/sound.mp3')}
+      onPress={() => navigation.navigate(level, { uid })}
+      style={styles.button}
+    >
+      <Foundation name="refresh" size={24} color="#003090" />
+    </SoundButton>
+    {level !== "game3level5" && (
+  <SoundButton
+    onPress={navigateToNextLevel}
+    style={styles.button}
+    textStyle={styles.buttonText}
+    title="Next Level"
+    soundPath={require('../../src/sound.mp3')} 
+  />
+)}
+{level === "game3level5" && (
+  <SoundButton
+    onPress={navigateToNextGame}
+    style={styles.button}
+    textStyle={styles.buttonText}
+    title="Next Game"
+    soundPath={require('../../src/sound.mp3')} 
+  />
+)}
           </View>
         </View>
         <View style={styles.scorelist}>

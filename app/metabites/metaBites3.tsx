@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
+import SoundButton from "../screens/SoundButton";
 
 type RootStackParamList = {
     Home: { uid?: string };
@@ -36,9 +37,13 @@ const MetaBites1: React.FC<{
   return (
     <ScrollView >
     <View style={styles.container}>
-         <TouchableOpacity style={styles.arrowButton} onPress={navigateToPrices}>
-          <AntDesign name="arrowleft" size={24} color="#003090" />
-        </TouchableOpacity>
+    <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={navigateToPrices}
+        style={styles.arrowButton}
+      >
+        <AntDesign name="arrowleft" size={24} color="black" />
+      </SoundButton>
     <View style={styles.content} >    
       <Text style={styles.title}>META-BITES</Text>
       <View style={styles.item}>
@@ -73,17 +78,16 @@ const MetaBites1: React.FC<{
         <Text style={styles.itemTitle}>10.	Ethanol inhibits gluconeogenesis in the liver by increasing the NADH/NAD+ ratio. Thus, excessive alcohol intake leads to hypoglycemia.</Text>
       </View>
       <View>
-      <TouchableOpacity
-              style={styles.puzzleBtns}
-              onPress={() => navigation.navigate(level, { uid: uid })}
-            >
-              <View style={styles.playBtns}>
- 
-                  <Text style={styles.pBtnHead}>Start To Play</Text>
-             
-                <AntDesign name="caretright" style={styles.play} size={15} color="#fff" />
-              </View>
-        </TouchableOpacity>
+      <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={() => navigation.navigate(level, { uid: uid })}
+        style={styles.puzzleBtns}
+      >
+        <View style={styles.playBtns}>
+          <Text style={styles.pBtnHead}>Start To Play</Text>
+          <AntDesign name="caretright" size={15} color="#fff" />
+        </View>
+      </SoundButton>
       </View>
     </View>
     </View>

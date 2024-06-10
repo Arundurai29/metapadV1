@@ -20,6 +20,7 @@ import { DATABASE } from "../../FireBaseConfig";
 import Draggable from "../draggable/draggable1-2";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
+import SoundButton from "../screens/SoundButton";
 
 const glass = require("../../assets/images/glass.png");
 const backgroundImage = require("../../src/imgpanda.png");
@@ -71,6 +72,17 @@ const Game3Level2 = ({ navigation, route }) => {
   }, [navigation]);
 
   useEffect(() => {
+    const resetTimerAndShuffleImages = () => {
+      setTimer(0);
+      shuffleImages();
+    };
+
+    const unsubscribe = navigation.addListener('focus', resetTimerAndShuffleImages);
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     if (uid) {
       const userRef = ref(DATABASE, `users/${uid}`);
       get(userRef)
@@ -92,7 +104,7 @@ const Game3Level2 = ({ navigation, route }) => {
     }
   }, [uid]);
 
-  useEffect(() => {
+  const shuffleImages = () => {
     const shuffledPositions = Object.values(positions.value).sort(
       () => Math.random() - 0.5
     );
@@ -100,7 +112,7 @@ const Game3Level2 = ({ navigation, route }) => {
       {},
       ...shuffledPositions.map((item, index) => ({ [index]: item }))
     );
-  }, []);
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -188,9 +200,13 @@ const Game3Level2 = ({ navigation, route }) => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <TouchableOpacity style={styles.arrowButton} onPress={navigateToPrices}>
-        <AntDesign name="arrowleft" size={24} color="#003090" />
-      </TouchableOpacity>
+     <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={navigateToPrices}
+        style={styles.arrowButton}
+      >
+        <AntDesign name="arrowleft" size={24} color="black" />
+      </SoundButton>
       <Image source={backgroundImage} style={styles.backgroundImage} />
       <View style={styles.buttonContainer}>
         <LinearGradient
@@ -212,22 +228,24 @@ const Game3Level2 = ({ navigation, route }) => {
           end={{ x: 1, y: 2 }}
           style={styles.btnbac}
         >
-          {isPlaying && (
-            <TouchableOpacity
-              style={styles.Button}
-              onPress={handleStartFinishButton}
-            >
-              <Text style={styles.btn_text}>Finish</Text>
-            </TouchableOpacity>
-          )}
-          {!isPlaying && (
-            <TouchableOpacity
-              style={styles.Button}
-              onPress={handleStartFinishButton}
-            >
-              <Text style={styles.btn_text}>Start</Text>
-            </TouchableOpacity>
-          )}
+           {isPlaying && (
+        <SoundButton
+          soundPath={require('../../src/sound.mp3')}
+          onPress={handleStartFinishButton}
+          style={styles.Button}
+        >
+          <Text style={styles.btn_text}>Finish</Text>
+        </SoundButton>
+      )}
+      {!isPlaying && (
+        <SoundButton
+          soundPath={require('../../src/sound.mp3')}
+          onPress={handleStartFinishButton}
+          style={styles.Button}
+        >
+          <Text style={styles.btn_text}>Start</Text>
+        </SoundButton>
+      )}
         </LinearGradient>
       </View>
       <View style={styles.wrapper}>

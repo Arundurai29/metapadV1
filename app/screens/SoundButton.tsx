@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Audio } from 'expo-av';
 
-const SoundButton = ({ title, soundPath, onPress, style, textStyle }) => {
+const SoundButton = ({ title, soundPath, onPress, style, textStyle, children, disabled }) => {
   const playSound = async () => {
     try {
       const { sound } = await Audio.Sound.createAsync(
@@ -13,7 +13,7 @@ const SoundButton = ({ title, soundPath, onPress, style, textStyle }) => {
       console.error('Failed to play sound', error);
     }
   };
-
+  
   const handlePress = () => {
     if (onPress) {
       onPress(); // Call the original onPress event handler first
@@ -22,9 +22,9 @@ const SoundButton = ({ title, soundPath, onPress, style, textStyle }) => {
   };
 
   return (
-    <TouchableOpacity onPress={handlePress} >
-      <Text style={ textStyle}>{title}</Text>
-    </TouchableOpacity>
+    <TouchableOpacity onPress={handlePress} style={style} disabled={disabled}>
+    {children ? children : <Text style={textStyle}>{title}</Text>}
+  </TouchableOpacity>
   );
 };
 

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "metapadV1",
-    "slug": "metapadV1",
-    "version": "1.0.0",
+    "name": "metapad",
+    "slug": "metapad",
+    "version": "2.0.0",
     "orientation": "landscape",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -15,22 +15,31 @@
       "**/*"
     ],
     "ios": {
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "This app uses the microphone to play sounds.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library to let you upload profile pictures"
+      },
       "supportsTablet": true,
-      "bundleIdentifier": "com.arundurai.metapadV1"
+      "bundleIdentifier": "metapad"
     },
     "android": {
+      "permissions": [
+        "RECORD_AUDIO","RECEIVE_BOOT_COMPLETED","CAMERA", "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "CAMERA_ROLL"
+      ],
+      
+      "useNextNotificationsApi": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.arundurai.metapadV1"
+      "package": "com.drskmgameuniverse.metapad"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "701ced42-2a26-4b8a-9cb7-8bbdbf80f99f"
+        "projectId": "dc124dba-e81d-477e-b441-c1052d3ec1db"
       }
     }
   }

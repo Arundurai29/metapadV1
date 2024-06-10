@@ -22,6 +22,7 @@ import { useFonts } from "expo-font";
 import { useRoute, RouteProp } from "@react-navigation/native";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
+import SoundButton from "../screens/SoundButton";
 
 const doctor1 = require("../../assets/images/doctor1.png");
 const doctor2 = require("../../assets/images/doctor2.png");
@@ -117,108 +118,99 @@ const Levels: React.FC<{
         resizeMode="cover"
         style={styles.container}
       >
-        <TouchableOpacity
-          style={styles.arrowButton}
-          onPress={navigateToLevels}
-        >
-          <AntDesign name="arrowleft" size={24} color="black" />
-        </TouchableOpacity>
+        <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={navigateToLevels}
+        style={styles.arrowButton}
+      >
+        <AntDesign name="arrowleft" size={24} color="black" />
+      </SoundButton>
         <View style={styles.titles}>
           <Text style={styles.head}>Electron Transport Chain</Text>
         </View>
         <View style={styles.level_section}>
           <Image source={doctor1} style={styles.doctor_img} />
           <View style={styles.levels}>
-            <TouchableOpacity
-              style={[
-                styles.puzzleBtns,
-                styles.boxShadow,
-              
-              ]}
-              onPress={() => navigation.navigate("Level", { uid: uid, level: "level1" })}
-              disabled={level1Complete}
-            >
-              <View style={styles.playBtns}>
-                <View>
-                  <Text style={styles.pBtnHead}>Level 1</Text>
-                </View>
-                <View style={styles.playBtn}>
-                  <AntDesign name="caretright" size={15} color="#fff" />
-                </View>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.puzzleBtns,
-                styles.boxShadow,
-                !level2Complete && styles.disabledButton,
-              ]}
-              onPress={() => navigation.navigate("Level", { uid: uid, level: "level2"})}
-              disabled={!level2Complete}
-            >
-              <View style={styles.playBtns}>
-                <View>
-                  <Text style={styles.pBtnHead}>Level 2</Text>
-                </View>
-                <View style={styles.playBtn}>
-                  <AntDesign name="caretright" size={15} color="#fff" />
-                </View>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.puzzleBtns,
-                styles.boxShadow,
-                !level3Complete && styles.disabledButton,
-              ]}
-              onPress={() => navigation.navigate("Level", { uid: uid, level: "level3"})}
-              disabled={!level3Complete}
-            >
-              <View style={styles.playBtns}>
-                <View>
-                  <Text style={styles.pBtnHead}>Level 3</Text>
-                </View>
-                <View style={styles.playBtn}>
-                  <AntDesign name="caretright" size={15} color="#fff" />
-                </View>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.puzzleBtns,
-                styles.boxShadow,
-                !level4Complete && styles.disabledButton,
-              ]}
-              onPress={() => navigation.navigate("Level", { uid: uid, level: "level4"})}
-              disabled={!level4Complete}
-            >
-              <View style={styles.playBtns}>
-                <View>
-                  <Text style={styles.pBtnHead}>Level 4</Text>
-                </View>
-                <View style={styles.playBtn}>
-                  <AntDesign name="caretright" size={15} color="#fff" />
-                </View>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.puzzleBtns,
-                styles.boxShadow,
-                !level5Complete && styles.disabledButton,
-              ]}
-              onPress={() => navigation.navigate("Level", { uid: uid, level: "level5"})}
-              
-            >
-              <View style={styles.playBtns}>
-                <View>
-                  <Text style={styles.pBtnHead}>Level 5</Text>
-                </View>
-                <View style={styles.playBtn}>
-                  <AntDesign name="caretright" size={15} color="#fff" />
-                </View>
-              </View>
-            </TouchableOpacity>
+          <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={() => navigation.navigate('Level', { uid: uid, level: 'level1' })}
+        style={[styles.puzzleBtns, styles.boxShadow]}
+        disabled={level1Complete}
+      >
+        <View style={styles.playBtns}>
+          <View>
+            <Text style={styles.pBtnHead}>Level 1</Text>
+          </View>
+          <View style={styles.playBtn}>
+            <AntDesign name="caretright" size={15} color="#fff" />
+          </View>
+        </View>
+      </SoundButton>
+     
+      <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={() => navigation.navigate('Level', { uid: uid, level: 'level2' })}
+        style={[styles.puzzleBtns, styles.boxShadow, !level2Complete && styles.disabledButton]}
+        disabled={!level2Complete}
+      >
+        <View style={styles.playBtns}>
+          <View>
+            <Text style={styles.pBtnHead}>Level 2</Text>
+          </View>
+          <View style={styles.playBtn}>
+            <AntDesign name="caretright" size={15} color="#fff" />
+          </View>
+        </View>
+      </SoundButton>
+           
+      <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={() => navigation.navigate('Level', { uid: uid, level: 'level3' })}
+        style={[styles.puzzleBtns, styles.boxShadow, !level3Complete && styles.disabledButton]}
+        disabled={!level3Complete}
+      >
+        <View style={styles.playBtns}>
+          <View>
+            <Text style={styles.pBtnHead}>Level 3</Text>
+          </View>
+          <View style={styles.playBtn}>
+            <AntDesign name="caretright" size={15} color="#fff" />
+          </View>
+        </View>
+      </SoundButton>
+
+            <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={() => navigation.navigate('Level', { uid: uid, level: 'level4' })}
+        style={[styles.puzzleBtns, styles.boxShadow, !level4Complete && styles.disabledButton]}
+        disabled={!level4Complete}
+      >
+        <View style={styles.playBtns}>
+          <View>
+            <Text style={styles.pBtnHead}>Level 4</Text>
+          </View>
+          <View style={styles.playBtn}>
+            <AntDesign name="caretright" size={15} color="#fff" />
+          </View>
+        </View>
+      </SoundButton>
+
+      <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={() => navigation.navigate('Level', { uid: uid, level: 'level5' })}
+        style={[styles.puzzleBtns, styles.boxShadow, !level5Complete && styles.disabledButton]}
+        disabled={!level5Complete}
+      >
+        <View style={styles.playBtns}>
+          <View>
+            <Text style={styles.pBtnHead}>Level 5</Text>
+          </View>
+          <View style={styles.playBtn}>
+            <AntDesign name="caretright" size={15} color="#fff" />
+          </View>
+        </View>
+      </SoundButton>
+
           </View>
           <Image source={doctor2} style={styles.doctor_img} />
         </View>

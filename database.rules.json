@@ -1,0 +1,27 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+    "users": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      ".indexOn": ["level1Time"] 
+    },
+    "posts": {
+      "$post_id": {
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".validate": "newData.hasChildren(['name', 'phone', 'level1Time'])",
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "level1Time": {
+          ".validate": "newData.isNumber() && newData.val() == 0"  
+        },
+        "phone": {
+          ".validate": "newData.isString()"
+        }
+      }
+    }
+  }
+}

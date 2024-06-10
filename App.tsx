@@ -4,7 +4,7 @@ import { StyleSheet, Text, View } from 'react-native';
 import Login from './app/screens/Login';
 import Home from './app/screens/Home';
 import { useEffect, useState } from 'react';
-import { User, onAuthStateChanged } from 'firebase/auth';
+import {User, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_APP, FIREBASE_AUTH } from './FireBaseConfig';
 import SignUpScreen from './app/screens/Signup';
 import NextScreen from './app/nextlevel/NextLevelScreen';
@@ -45,88 +45,121 @@ import MetaBites from './app/metabites/metaBites';
 import MetaBites1 from './app/metabites/metaBites1';
 import MetaBites3 from './app/metabites/metaBites3';
 import MetaBites4 from './app/metabites/metaBites4';
-import PuzzleGameApp from './app/screens/SoundButton';
+import SoundHandle from './app/screens/Piece';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import EmailSend from './app/screens/EmailSend';
+import VerifyOTPScreen from './app/screens/VerifyOTPScreen';
+import Welcome from './app/screens/Welcome';
+import { requestNotificationPermissions, scheduleHourlyNotification } from './app/screens/notificationHelper';
+import * as Notifications from 'expo-notifications';
+import Edit from './app/screens/Edit';
+import { UserProvider } from './app/screens/UserContext';
 
 const Stack = createNativeStackNavigator();
-const InsideStack = createNativeStackNavigator();
-const puzzlegmae=createNativeStackNavigator();
-
-function Insidelayout(){
-  return(
-    <InsideStack.Navigator>
-      <InsideStack.Screen name='Home' component={Home} />
-      
-    </InsideStack.Navigator>
-  )
-}
-
-
-
 
 export default function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState<User | null>(null); // Specify User | null as the type
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
-      console.log('user', user);
       setUser(user);
-    }, (error) => {
-      console.error('Auth state change error:', error);
+      if (initializing) setInitializing(false);
     });
 
-    return () => unsubscribe();
+    checkUserLoggedIn();
+
+    return unsubscribe;
   }, []);
+
+  // notication code
+  useEffect(() => {
+    async function setupNotifications() {
+      const hasPermission = await requestNotificationPermissions();
+      if (hasPermission) {
+        await scheduleHourlyNotification();
+      }
+    }
+
+    setupNotifications();
+  }, []);
+
+  useEffect(() => {
+    const subscription = Notifications.addNotificationReceivedListener(notification => {
+      console.log('Notification Received:', notification);
+    });
+
+    return () => subscription.remove();
+  }, []);
+  // notication code end
+
+  const checkUserLoggedIn = async () => {
+    try {
+      const userCredential = await AsyncStorage.getItem('userCredential');
+      if (userCredential) {
+        setUser(JSON.parse(userCredential));
+      }
+    } catch (error) {
+      console.error('Error checking user login:', error);
+    }
+``  };
+
+  if (initializing) return null;
+
   return (
+    <UserProvider>
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}  initialRouteName='PuzzleGameApp'>
-        {user ? (
-            <Stack.Screen name='Inside' component={Insidelayout} options={{headerShown:false}} />
-        ):(
-  <Stack.Screen name='Login' component={Login} options={{headerShown:false}} />
-        )}
-       <Stack.Screen name='SignUp' component={SignUpScreen} options={{headerShown:false}} />
-       <Stack.Screen name='Home' component={Home}  options={{headerShown:false}} />
-       <Stack.Screen name='level1' component={Level1} options={{headerShown:false}} />
-       <Stack.Screen name='draggblebox' component={PlaceholderScreen} options={{headerShown:false}} />
-       <Stack.Screen name="NextScreen" component={NextScreen} />
-       <Stack.Screen name="NextLevelScreen2" component={NextLevelScreen2} />
-       <Stack.Screen name="NextLevelScreen3" component={NextLevelScreen3} />
-       <Stack.Screen name="NextLevelScreen4" component={NextLevelScreen4} />
-       <Stack.Screen name="MetaBites" component={MetaBites} />
-       <Stack.Screen name="MetaBites1" component={MetaBites1} />
-       <Stack.Screen name="MetaBites3" component={MetaBites3} />
-       <Stack.Screen name="MetaBites4" component={MetaBites4} />
-       <Stack.Screen name="Levels" component={Levels} />
-       <Stack.Screen name="level2" component={Level2} />
-       <Stack.Screen name="level3" component={Level3} />
-       <Stack.Screen name="level4" component={Level4} />
-       <Stack.Screen name="level5" component={Level5} />
-       <Stack.Screen name="game2level1" component={Game2Level1} />
-       <Stack.Screen name="game2level2" component={Game2Level2} />
-       <Stack.Screen name="game2level3" component={Game2Level3} />
-       <Stack.Screen name="game2level4" component={Game2Level4} />
-       <Stack.Screen name="game2level5" component={Game2Level5} />
-       <Stack.Screen name="game3level1" component={Game3Level1} />
-       <Stack.Screen name="game3level2" component={Game3Level2} />
-       <Stack.Screen name="game3level3" component={Game3Level3} />
-       <Stack.Screen name="game3level4" component={Game3Level4} />
-       <Stack.Screen name="game3level5" component={Game3Level5} />
-       <Stack.Screen name="game4level1" component={Game4Level1} />
-       <Stack.Screen name="game4level2" component={Game4Level2} />
-       <Stack.Screen name="game4level3" component={Game4Level3} />
-       <Stack.Screen name="game4level4" component={Game4Level4} />
-       <Stack.Screen name="game4level5" component={Game4Level5} />
-       <Stack.Screen name="game2levels" component={Game2Levels} />
-       <Stack.Screen name="game3levels" component={Game3Levels} />
-       <Stack.Screen name="game4levels" component={Game4Levels} />
-       <Stack.Screen name="Level" component={Level} />
-       <Stack.Screen name="game2level" component={Game2level} />
-       <Stack.Screen name="game3level" component={Game3level} />
-       <Stack.Screen name="game4level" component={Game4level} />
+ <Stack.Navigator headerMode="none"  initialRouteName={user ? 'Home' : 'Login'} >
+       <Stack.Screen name='Login' component={Login} options={{ headerShown: false }} />
+       <Stack.Screen name='EmailSend' component={EmailSend} options={{ headerShown: false }} />
+       <Stack.Screen name='SignUp' component={SignUpScreen} options={{ headerShown: false }} />
+       <Stack.Screen name='Edit' component={Edit} options={{ headerShown: false }} />
+       <Stack.Screen name='Welcome' component={Welcome} options={{ headerShown: false }} />
+       <Stack.Screen name='SoundHandle' component={SoundHandle} options={{ headerShown: false }} />
+       <Stack.Screen name='VerifyOTP' component={VerifyOTPScreen} options={{ headerShown: false }} />
+       <Stack.Screen name='Home' component={Home}  options={{ headerShown: false }} />
+       <Stack.Screen name='level1' component={Level1} options={{ headerShown: false }} />
+       <Stack.Screen name='draggblebox' component={PlaceholderScreen} options={{ headerShown: false }} />
+       <Stack.Screen name="NextScreen" component={NextScreen} options={{ headerShown: false }} />
+       <Stack.Screen name="NextLevelScreen2" component={NextLevelScreen2} options={{ headerShown: false }} />
+       <Stack.Screen name="NextLevelScreen3" component={NextLevelScreen3} options={{ headerShown: false }} />
+       <Stack.Screen name="NextLevelScreen4" component={NextLevelScreen4} options={{ headerShown: false }} />
+       <Stack.Screen name="MetaBites" component={MetaBites} options={{ headerShown: false }} />
+       <Stack.Screen name="MetaBites1" component={MetaBites1} options={{ headerShown: false }} />
+       <Stack.Screen name="MetaBites3" component={MetaBites3} options={{ headerShown: false }} />
+       <Stack.Screen name="MetaBites4" component={MetaBites4} options={{ headerShown: false }} />
+       <Stack.Screen name="Levels" component={Levels} options={{ headerShown: false }} />
+       <Stack.Screen name="level2" component={Level2} options={{ headerShown: false }} />
+       <Stack.Screen name="level3" component={Level3} options={{ headerShown: false }} />
+       <Stack.Screen name="level4" component={Level4} options={{ headerShown: false }} />
+       <Stack.Screen name="level5" component={Level5} options={{ headerShown: false }} />
+       <Stack.Screen name="game2level1" component={Game2Level1} options={{ headerShown: false }} />
+       <Stack.Screen name="game2level2" component={Game2Level2} options={{ headerShown: false }} />
+       <Stack.Screen name="game2level3" component={Game2Level3} options={{ headerShown: false }} />
+       <Stack.Screen name="game2level4" component={Game2Level4} options={{ headerShown: false }} />
+       <Stack.Screen name="game2level5" component={Game2Level5} options={{ headerShown: false }} />
+       <Stack.Screen name="game3level1" component={Game3Level1} options={{ headerShown: false }} />
+       <Stack.Screen name="game3level2" component={Game3Level2} options={{ headerShown: false }} />
+       <Stack.Screen name="game3level3" component={Game3Level3} options={{ headerShown: false }} />
+       <Stack.Screen name="game3level4" component={Game3Level4} options={{ headerShown: false }} />
+       <Stack.Screen name="game3level5" component={Game3Level5} options={{ headerShown: false }} />
+       <Stack.Screen name="game4level1" component={Game4Level1} options={{ headerShown: false }} />
+       <Stack.Screen name="game4level2" component={Game4Level2} options={{ headerShown: false }} />
+       <Stack.Screen name="game4level3" component={Game4Level3} options={{ headerShown: false }} />
+       <Stack.Screen name="game4level4" component={Game4Level4} options={{ headerShown: false }} />
+       <Stack.Screen name="game4level5" component={Game4Level5} options={{ headerShown: false }} />
+       <Stack.Screen name="game2levels" component={Game2Levels} options={{ headerShown: false }} />
+       <Stack.Screen name="game3levels" component={Game3Levels} options={{ headerShown: false }} />
+       <Stack.Screen name="game4levels" component={Game4Levels} options={{ headerShown: false }} />
+       <Stack.Screen name="Level" component={Level} options={{ headerShown: false }} />
+       <Stack.Screen name="game2level" component={Game2level} options={{ headerShown: false }} />
+       <Stack.Screen name="game3level" component={Game3level} options={{ headerShown: false }} />
+       <Stack.Screen name="game4level" component={Game4level} options={{ headerShown: false }} />
        
       </Stack.Navigator>
       
     </NavigationContainer>
+    </UserProvider>
   );
 }
 

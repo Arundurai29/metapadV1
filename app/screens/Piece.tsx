@@ -1,61 +1,64 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
-import { ref, get } from "firebase/database";
-import { DATABASE } from "../../FireBaseConfig";
+import React, { useRef, useEffect } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import { PanGestureHandler, State } from 'react-native-gesture-handler';
+import { Audio } from 'expo-av';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-const UserDataScreen = ({ route }) => {
-  const { uid } = route.params ?? {};
-  const [userData, setUserData] = useState(null);
-  const [loading, setLoading] = useState(true);
+const SoundHandler = () => {
+  const soundRef = useRef(new Audio.Sound());
 
   useEffect(() => {
-    if (uid) {
-      const userRef = ref(DATABASE, `users/${uid}`);
-      get(userRef)
-        .then((snapshot) => {
-          if (snapshot.exists()) {
-            setUserData(snapshot.val());
-          } else {
-            console.log("User data not found");
-          }
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-        })
-        .finally(() => {
-          setLoading(false);
-        });
-    } else {
-      setLoading(false);
+    // Load the sound file
+    const loadSound = async () => {
+      try {
+        await soundRef.current.loadAsync(require('../../src/sound.mp3'));
+      } catch (error) {
+        console.log('Error loading sound: ', error);
+      }
+    };
+
+    loadSound();
+
+    return () => {
+      // Unload the sound when the component unmounts
+      soundRef.current.unloadAsync();
+    };
+  }, []);
+
+  const onGestureEvent = (event) => {
+    // Handle the gesture event if needed
+  };
+
+  const onHandlerStateChange = async (event) => {
+    if (event.nativeEvent.state === State.ACTIVE) {
+      try {
+        await soundRef.current.replayAsync();
+      } catch (error) {
+        console.log('Error playing sound: ', error);
+      }
     }
-  }, [uid]);
+  };
 
   return (
-    <View style={styles.container}>
-      {loading ? (
-        <Text>Loading...</Text>
-      ) : (
-        <View>
-          <Text>User Data:</Text>
-          {userData && (
-            <View>
-              <Text>Name: {userData.name}</Text>
-              <Text>Email: {userData.email}</Text>
-              {/* Add more fields as needed */}
-            </View>
-          )}
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <PanGestureHandler
+        onGestureEvent={onGestureEvent}
+        onHandlerStateChange={onHandlerStateChange}
+      >
+        <View style={styles.container}>
+          <Text>Pan me and hear a sound!</Text>
         </View>
-      )}
-    </View>
+      </PanGestureHandler>
+    </GestureHandlerRootView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
-export default UserDataScreen;
+export default SoundHandler;

@@ -1,4 +1,5 @@
-import React from 'react';
+import React,{useEffect,useRef} from 'react';
+import { Audio } from 'expo-av';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedGestureHandler,
@@ -13,15 +14,51 @@ const Draggable = ({ children, positions, id, gameStarted }) => {
   const position = getPosition(positions.value[id]);
   const translateX = useSharedValue(position.x);
   const translateY = useSharedValue(position.y);
-
   const isGestureActive = useSharedValue(false);
+  const playSoundSignal = useSharedValue(false);
+
+  const soundRef = useRef(new Audio.Sound());
+
+  useEffect(() => {
+    const loadSound = async () => {
+      try {
+        const soundFile = require('../../src/suffle1.wav');
+        await soundRef.current.loadAsync(soundFile);
+      } catch (error) {
+        console.error('Error loading sound:', error.message || error);
+      }
+    };
+
+    loadSound();
+
+    return () => {
+      soundRef.current.unloadAsync();
+    };
+  }, []);
+
+  useEffect(() => {
+    const playSound = async () => {
+      try {
+        if (playSoundSignal.value) {
+          await soundRef.current.replayAsync();
+        }
+      } catch (error) {
+        console.error('Error playing sound:', error.message || error);
+      }
+    };
+
+    if (playSoundSignal.value) {
+      playSoundSignal.value = false; 
+      playSound();
+    }
+  }, [playSoundSignal.value]);
 
   useAnimatedReaction(
     () => positions.value[id],
     newOrder => {
-      const newPostions = getPosition(newOrder);
-      translateX.value = withTiming(newPostions.x);
-      translateY.value = withTiming(newPostions.y);
+      const newPositions = getPosition(newOrder);
+      translateX.value = withTiming(newPositions.x);
+      translateY.value = withTiming(newPositions.y);
     },
   );
 
@@ -42,11 +79,15 @@ const Draggable = ({ children, positions, id, gameStarted }) => {
           key => positions.value[key] === newOrder,
         );
         if (idToSwap) {
-          const newPostions = JSON.parse(JSON.stringify(positions.value));
-          newPostions[id] = newOrder;
-          newPostions[idToSwap] = oldOrder;
-          positions.value = newPostions;
+          const newPositions = JSON.parse(JSON.stringify(positions.value));
+          newPositions[id] = newOrder;
+          newPositions[idToSwap] = oldOrder;
+          positions.value = newPositions;
         }
+      }
+
+      if (!playSoundSignal.value) {
+        playSoundSignal.value = true; 
       }
     },
     onEnd: () => {
@@ -76,14 +117,10 @@ const Draggable = ({ children, positions, id, gameStarted }) => {
 
   return (
     <Animated.View style={animatedStyle}>
-      {gameStarted ? (
-        <PanGestureHandler onGestureEvent={panGesture}>
-          <Animated.View>{children}</Animated.View>
-        </PanGestureHandler>
-      ) : (
-        <Animated.View>{children}</Animated.View>
-      )}
-    </Animated.View>
+    <PanGestureHandler enabled={gameStarted} onGestureEvent={panGesture}>
+         <Animated.View>{children}</Animated.View>
+       </PanGestureHandler>
+   </Animated.View>
   );
 };
 

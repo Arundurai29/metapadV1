@@ -11,16 +11,17 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { FIREBASE_AUTH, FIREBASE_DB, DATABASE } from '../../FireBaseConfig';
+import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'firebase/auth';
+import { FIREBASE_AUTH } from '../../FireBaseConfig';
 import { useFonts } from 'expo-font';
-import { ref, set } from 'firebase/database';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import SoundButton from './SoundButton';
 
 const logo = require('../../assets/images/metapad.png');
 const login_bg = require('../../assets/images/login-bg.png');
@@ -28,6 +29,7 @@ const login_bg = require('../../assets/images/login-bg.png');
 type RootStackParamList = {
   SignUp: undefined;
   Profile: { uid: string };
+  VerifyOTP: { email: string; password: string; name: string; phone: string; otp: string };
 };
 
 type SignUpScreenNavigationProp = NativeStackNavigationProp<
@@ -60,74 +62,51 @@ const SignUpScreen: React.FC<{
   };
 
   const signUp = async () => {
-    if (!isChecked) {
+    setLoading(true);
+
+    try {
+        if (!isChecked) {
       // Check if checkbox is checked before proceeding with sign up
       alert('Please agree to terms and conditions to proceed.');
       return;
     }
+      const signInMethods = await fetchSignInMethodsForEmail(auth, email);
 
-    setLoading(true);
-    try {
-      const response = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
+      if (signInMethods.length > 0) {
+        // Email already exists
+        setLoading(false);
+        Alert.alert('Error', 'Email already exists. Please use a different email address.');
+      } else {
+        // Email does not exist, proceed to generate OTP
+        const response = await fetch('https://extreme-deadpan-border.glitch.me/api/generateOTP', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
 
-      // Save user data to the database
-      set(ref(DATABASE, 'users/' + response.user.uid), {
-        name: name,
-          phone: phone,
-          level1Time:0,
-          level2Time:0,
-          level3Time:0,
-          level4Time:0,
-          level5Time:0,
-          level1:'start',
-          level2:'pending',
-          level3:'pending',
-          level4:'pending',
-          level5:'pending',
-          game2level1Time:0,
-          game2level2Time:0,
-          game2level3Time:0,
-          game2level4Time:0,
-          game2level5Time:0,
-          game2level1:'start',
-          game2level2:'pending',
-          game2level3:'pending',
-          game2level4:'pending',
-          game2level5:'pending',
-          game3level1Time:0,
-          game3level2Time:0,
-          game3level3Time:0,
-          game3level4Time:0,
-          game3level5Time:0,
-          game3level1:'start',
-          game3level2:'pending',
-          game3level3:'pending',
-          game3level4:'pending',
-          game3level5:'pending',
-          game4level1Time:0,
-          game4level2Time:0,
-          game4level3Time:0,
-          game4level4Time:0,
-          game4level5Time:0,
-          game4level1:'start',
-          game4level2:'pending',
-          game4level3:'pending',
-          game4level4:'pending',
-          game4level5:'pending',
-      });
+        if (!response.ok) {
+          throw new Error('Failed to generate OTP');
+        }
 
-      navigation.navigate('Home', { uid: response.user.uid });
+        // OTP generated successfully, navigate to OTP verification screen
+        navigation.navigate('VerifyOTP', {
+          email,
+          password,
+          name,
+          phone,
+        });
+      }
     } catch (error) {
-      console.log(error);
-      alert('Sign up failed: ' + error.message);
+      console.error('Error:', error);
+      Alert.alert('Error', 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+
+  
 
   const [isLoaded] = useFonts({
     'pop-mid': require('../../assets/fonts/Poppins-Medium.ttf'),
@@ -179,6 +158,10 @@ const SignUpScreen: React.FC<{
       [field]: false,
     }));
   };
+
+  if (!isLoaded) {
+    return <ActivityIndicator size="large" color="#0000ff" />;
+  }
 
   return (
     <ScrollView>
@@ -278,14 +261,23 @@ const SignUpScreen: React.FC<{
                 colors={['#003090', '#3B66CF']}
                 end={{ x: 1, y: 2 }}
                 style={styles.Button}>
-                <TouchableOpacity onPress={signUp}>
-                  <Text style={styles.login}>Continue</Text>
-                </TouchableOpacity>
+             
+                <SoundButton
+        title="Continue"
+        soundPath={require('../../src/sound.mp3')}
+        onPress={signUp}
+        style={styles}
+        textStyle={styles.login} // Use the same style as the button
+      />
               </LinearGradient>
 
-              <TouchableOpacity onPress={goToSignIn}>
-                <Text style={styles.new}>Already have an account ?</Text>
-              </TouchableOpacity>
+              <SoundButton
+        title="Already have an account ?"
+        soundPath={require('../../src/sound.mp3')}
+        onPress={goToSignIn}
+        style={styles}
+        textStyle={styles.new} // Use the same style as the button
+      />
             </View>
           )}
         </KeyboardAvoidingView>

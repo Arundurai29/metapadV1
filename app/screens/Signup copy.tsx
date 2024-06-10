@@ -1,70 +1,82 @@
-  // SignUpScreen.tsx
-  import React, { useState,useEffect } from 'react';
-  import {
-    View,
-    TextInput,
-    Button,
-    ImageBackground,
-    StyleSheet,
-    ActivityIndicator,
-    KeyboardAvoidingView,
-    Image,
-    Text,
-    TouchableOpacity,
-    ScrollView
-  } from "react-native";
-  import { useNavigation } from '@react-navigation/native';
-  import { createUserWithEmailAndPassword } from 'firebase/auth';
-  import { FIREBASE_AUTH, FIREBASE_DB,DATABASE } from '../../FireBaseConfig';
-  import { useFonts } from "expo-font";
-  import {ref,set} from 'firebase/database';
-  import { LinearGradient } from "expo-linear-gradient";
-  import { RouteProp } from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  TextInput,
+  Button,
+  ImageBackground,
+  StyleSheet,
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Image,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { FIREBASE_AUTH, FIREBASE_DB, DATABASE } from '../../FireBaseConfig';
+import { useFonts } from 'expo-font';
+import { ref, set } from 'firebase/database';
+import { LinearGradient } from 'expo-linear-gradient';
+import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import * as ScreenOrientation from 'expo-screen-orientation'
+import * as ScreenOrientation from 'expo-screen-orientation';
 
-  const logo = require("../../assets/images/metapad.png");
-const login_bg = require("../../assets/images/login-bg.png");
+const logo = require('../../assets/images/metapad.png');
+const login_bg = require('../../assets/images/login-bg.png');
 
 type RootStackParamList = {
   SignUp: undefined;
   Profile: { uid: string };
 };
 
-type SignUpScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'SignUp'>;
+type SignUpScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'SignUp'
+>;
 type SignUpScreenRouteProp = RouteProp<RootStackParamList, 'SignUp'>;
 
 const SignUpScreen: React.FC<{
   navigation: SignUpScreenNavigationProp;
   route: SignUpScreenRouteProp;
 }> = ({ navigation, route }) => {
-  const [isFocused, setFocused] = useState(false);
-  const [isFocusedd, setFocusedd] = useState(false);
-  const [isFocuse, setFocuse] = useState(false);
-  const [isFocus, setFocus] = useState(false);
+  const [isFocused, setFocused] = useState({
+    name: false,
+    phone: false,
+    email: false,
+    password: false,
+  });
+  const [isChecked, setChecked] = useState(false); // State to track checkbox status
 
-      const [email, setEmail] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const auth = FIREBASE_AUTH;
 
-    const goToSignIn = () => {
-      navigation.navigate('Login');
-    };
+  const goToSignIn = () => {
+    navigation.navigate('Login');
+  };
 
-    const signUp = async () => {
-      
-      
+  const signUp = async () => {
+    if (!isChecked) {
+      // Check if checkbox is checked before proceeding with sign up
+      alert('Please agree to terms and conditions to proceed.');
+      return;
+    }
 
-      setLoading(true);
-      try {
-        const response = await createUserWithEmailAndPassword(auth, email, password);
+    setLoading(true);
+    try {
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-        // Save user data to the database
-        set(ref(DATABASE, 'users/' + response.user.uid), {
-          name: name,
+      // Save user data to the database
+      set(ref(DATABASE, 'users/' + response.user.uid), {
+        name: name,
           phone: phone,
           level1Time:0,
           level2Time:0,
@@ -106,151 +118,182 @@ const SignUpScreen: React.FC<{
           game4level3:'pending',
           game4level4:'pending',
           game4level5:'pending',
-        });
-  
-        navigation.navigate('Home', { uid: response.user.uid });
-     
-        if (!isLoaded) {
-          return <ActivityIndicator />;
-        }
+      });
 
+      navigation.navigate('Home', { uid: response.user.uid });
+    } catch (error) {
+      console.log(error);
+      alert('Sign up failed: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const [isLoaded] = useFonts({
+    'pop-mid': require('../../assets/fonts/Poppins-Medium.ttf'),
+    'pop-reg': require('../../assets/fonts/Poppins-Regular.ttf'),
+    'pop-bold': require('../../assets/fonts/Poppins-Bold.ttf'),
+    'pop-xbold': require('../../assets/fonts/Poppins-ExtraBold.ttf'),
+  });
+
+  useEffect(() => {
+    async function changeScreenOrientation() {
+      try {
+        await ScreenOrientation.lockAsync(
+          ScreenOrientation.OrientationLock.PORTRAIT
+        );
       } catch (error) {
-        console.log(error);
-        alert('Sign up failed: ' + error.message);
-      } finally {
-        setLoading(false);
+        console.error('Error locking screen orientation:', error);
       }
-    };
+    }
 
-    const [isLoaded] = useFonts({
-      "pop-mid": require("../../assets/fonts/Poppins-Medium.ttf"),
-      "pop-reg": require("../../assets/fonts/Poppins-Regular.ttf"),
-      "pop-bold": require("../../assets/fonts/Poppins-Bold.ttf"),
-      "pop-xbold": require("../../assets/fonts/Poppins-ExtraBold.ttf"),
-    });
+    changeScreenOrientation();
 
-    useEffect(() => {
-      async function changeScreenOrientation() {
+    return () => {
+      async function unlockScreenOrientation() {
         try {
-          await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+          await ScreenOrientation.unlockAsync();
         } catch (error) {
-          console.error('Error locking screen orientation:', error);
+          console.error('Error unlocking screen orientation:', error);
         }
       }
-    
-      changeScreenOrientation();
-    
-      return () => {
-        async function unlockScreenOrientation() {
-          try {
-            await ScreenOrientation.unlockAsync();
-          } catch (error) {
-            console.error('Error unlocking screen orientation:', error);
-          }
-        }
-    
-        unlockScreenOrientation();
-      };
-    }, []);
 
-    return (
-      <ScrollView>
+      unlockScreenOrientation();
+    };
+  }, []);
+
+  const handleCheckboxToggle = () => {
+    setChecked(!isChecked);
+  };
+
+  const handleFocus = (field: string) => {
+    setFocused((prevState) => ({
+      ...prevState,
+      [field]: true,
+    }));
+  };
+
+  const handleBlur = (field: string) => {
+    setFocused((prevState) => ({
+      ...prevState,
+      [field]: false,
+    }));
+  };
+
+  return (
+    <ScrollView>
       <ImageBackground
-      source={login_bg}
-      resizeMode="cover"
-      style={styles.container}
-    >
-      <View style={styles.Logos}>
-        <Image style={styles.Logo} source={logo} />
-      </View>
-      <View style={styles.titles}>
-        <Text style={styles.head}>Create Account</Text>
-        <Text style={[styles.belowhead, styles.mb20]}>Create an account so you can explore all our puzzles</Text>
-      </View>
-        <KeyboardAvoidingView behavior='padding'>
+        source={login_bg}
+        resizeMode="cover"
+        style={styles.container}>
+        <View style={styles.Logos}>
+          <Image style={styles.Logo} source={logo} />
+        </View>
+        <View style={styles.titles}>
+          <Text style={styles.head}>Create Account</Text>
+          <Text style={[styles.belowhead, styles.mb20]}>
+            Create an account so you can explore all our puzzles
+          </Text>
+        </View>
+        <KeyboardAvoidingView behavior="padding">
           <TextInput
             style={{
               ...styles.input,
-              borderColor: isFocused ? "#003090" : "#fff",
+              borderColor: isFocused.name ? '#003090' : '#fff',
               borderWidth: 1,
-              color: isFocused ? "#000" : "black",
+              color: isFocused.name ? '#000' : 'black',
             }}
             placeholder="Name"
             autoCapitalize="words"
             value={name}
             onChangeText={(text) => setName(text)}
-            onFocus={() => setFocused(true)}
-          onBlur={() => setFocused(false)}
+            onFocus={() => handleFocus('name')}
+            onBlur={() => handleBlur('name')}
           />
           <TextInput
             style={{
               ...styles.input,
-              borderColor: isFocusedd ? "#003090" : "#fff",
+              borderColor: isFocused.phone ? '#003090' : '#fff',
               borderWidth: 1,
-              color: isFocusedd ? "#000" : "black",
+              color: isFocused.phone ? '#000' : 'black',
             }}
             placeholder="Phone Number"
             keyboardType="phone-pad"
             value={phone}
             onChangeText={(text) => setPhoneNumber(text)}
-            onFocus={() => setFocusedd(true)}
-            onBlur={() => setFocusedd(false)}
+            onFocus={() => handleFocus('phone')}
+            onBlur={() => handleBlur('phone')}
           />
           <TextInput
-           style={{
-            ...styles.input,
-            borderColor: isFocuse ? "#003090" : "#fff",
-            borderWidth: 1,
-            color: isFocuse ? "#000" : "black",
-          }}
+            style={{
+              ...styles.input,
+              borderColor: isFocused.email ? '#003090' : '#fff',
+              borderWidth: 1,
+              color: isFocused.email ? '#000' : 'black',
+            }}
             placeholder="Email"
             autoCapitalize="none"
             value={email}
             onChangeText={(text) => setEmail(text)}
             keyboardType="email-address"
-            onFocus={() => setFocuse(true)}
-            onBlur={() => setFocuse(false)}
+            onFocus={() => handleFocus('email')}
+            onBlur={() => handleBlur('email')}
           />
           <TextInput
-           style={{
-            ...styles.input,
-            borderColor: isFocus ? "#003090" : "#fff",
-            borderWidth: 1,
-            color: isFocus ? "#000" : "black",
-          }}
+            style={{
+              ...styles.input,
+              borderColor: isFocused.password ? '#003090' : '#fff',
+              borderWidth: 1,
+              color: isFocused.password ? '#000' : 'black',
+            }}
             placeholder="Password"
             secureTextEntry={true}
             autoCapitalize="none"
             value={password}
             onChangeText={(text) => setPassword(text)}
-            onFocus={() => setFocus(true)}
-            onBlur={() => setFocus(false)}
+            onFocus={() => handleFocus('password')}
+            onBlur={() => handleBlur('password')}
           />
+          <View style={styles.checkboxContainer}>
+            <TouchableOpacity
+              style={styles.checkbox}
+              onPress={handleCheckboxToggle}>
+              <View
+                style={[
+                  styles.checkboxInner,
+                  isChecked ? styles.checked : null,
+                ]}
+              />
+            </TouchableOpacity>
+            <Text style={styles.checkboxText}>
+              I agree to the terms and conditions
+            </Text>
+          </View>
           {loading ? (
             <ActivityIndicator size="large" color="#0000ff" />
           ) : (
             <View>
-               <LinearGradient
-              start={{ x: 0, y: 0.2 }}
-              colors={["#003090", "#3B66CF"]}
-              end={{ x: 1, y: 2 }}
-              style={styles.Button}
-            >
-              <TouchableOpacity onPress={signUp}>
-                <Text style={styles.login}>Continue</Text>
-              </TouchableOpacity>
-            </LinearGradient>
-            
+              <LinearGradient
+                start={{ x: 0, y: 0.2 }}
+                colors={['#003090', '#3B66CF']}
+                end={{ x: 1, y: 2 }}
+                style={styles.Button}>
+                <TouchableOpacity onPress={signUp}>
+                  <Text style={styles.login}>Continue</Text>
+                </TouchableOpacity>
+              </LinearGradient>
+
               <TouchableOpacity onPress={goToSignIn}>
-              <Text style={styles.new}>Already have an account ?</Text>
-            </TouchableOpacity>
+                <Text style={styles.new}>Already have an account ?</Text>
+              </TouchableOpacity>
             </View>
           )}
         </KeyboardAvoidingView>
-     </ImageBackground>
-     </ScrollView>
-    );
-  };
+      </ImageBackground>
+    </ScrollView>
+  );
+};
+
 
   const styles = StyleSheet.create({
     ScrollView:{
@@ -337,6 +380,36 @@ const SignUpScreen: React.FC<{
       marginTop: 20,
       fontFamily: "pop-bold",
       fontSize: 16,
+    },
+    checkboxContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: 10,
+      marginTop:10,
+    },
+    checkbox: {
+      width: 24,
+      height: 24,
+      borderRadius: 4,
+      borderWidth: 1,
+      borderColor: '#003090',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: 10,
+    },
+    checkboxInner: {
+      width: 12,
+      height: 12,
+      backgroundColor: '#003090',
+      borderRadius: 2,
+      display: 'none',
+    },
+    checked: {
+      display: 'flex',
+    },
+    checkboxText: {
+      fontSize: 16,
+      color: 'black',
     },
   });
 

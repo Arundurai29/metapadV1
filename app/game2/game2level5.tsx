@@ -16,6 +16,7 @@ import { useSharedValue } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { ref, get, set } from "firebase/database";
 import { Entypo } from "@expo/vector-icons";
+import SoundButton from "../screens/SoundButton";
 import { AntDesign } from "@expo/vector-icons";
 import { DATABASE } from "../../FireBaseConfig";
 import Draggable from "../draggable/draggable2-3";
@@ -137,6 +138,17 @@ const Game2Level5 = ({ navigation, route }) => {
   }, [navigation]);
 
   useEffect(() => {
+    const resetTimerAndShuffleImages = () => {
+      setTimer(0);
+      shuffleImages();
+    };
+
+    const unsubscribe = navigation.addListener('focus', resetTimerAndShuffleImages);
+
+    return unsubscribe;
+  }, [navigation]);
+
+  useEffect(() => {
     if (uid) {
       const userRef = ref(DATABASE, `users/${uid}`);
       get(userRef)
@@ -158,7 +170,7 @@ const Game2Level5 = ({ navigation, route }) => {
     }
   }, [uid]);
 
-  useEffect(() => {
+  const shuffleImages = () => {
     const shuffledPositions = Object.values(positions.value).sort(
       () => Math.random() - 0.5
     );
@@ -166,7 +178,7 @@ const Game2Level5 = ({ navigation, route }) => {
       {},
       ...shuffledPositions.map((item, index) => ({ [index]: item }))
     );
-  }, []);
+  };
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -187,8 +199,11 @@ const Game2Level5 = ({ navigation, route }) => {
       (a, b) => a - b
     );
     const originalOrder = [...Array(imageSources.length).keys()];
-    const isComplete =
-      JSON.stringify(currentPositions) === JSON.stringify(originalOrder);
+    const allowedPositions = [0,1,7,8,9,17,21,22,29,30,31,39,40,41,42,48,49,50,51,57,58,59,72,80];
+    const isComplete = currentPositions.every((value, index) => {
+      return allowedPositions.includes(index) || value === originalOrder[index];
+    });
+
     setCompleted(isComplete);
 
     if (isComplete) {
@@ -216,10 +231,11 @@ const Game2Level5 = ({ navigation, route }) => {
   };
 
   const checkPosition = () => {
+    const allowedPositions = [0,1,7,8,9,17,21,22,29,30,31,39,40,41,42,48,49,50,51,57,58,59,72,80];
     let allPlaced = true;
 
     for (let i = 0; i < imageSources.length; i++) {
-      if (positions.value[i] !== i) {
+      if (!allowedPositions.includes(i) && positions.value[i] !== i) {
         allPlaced = false;
         break;
       }
@@ -253,9 +269,13 @@ const Game2Level5 = ({ navigation, route }) => {
 
   return (
     <GestureHandlerRootView style={styles.container}>
-      <TouchableOpacity style={styles.arrowButton} onPress={navigateToPrices}>
-        <AntDesign name="arrowleft" size={24} color="#003090" />
-      </TouchableOpacity>
+      <SoundButton
+        soundPath={require('../../src/sound.mp3')}
+        onPress={navigateToPrices}
+        style={styles.arrowButton}
+      >
+        <AntDesign name="arrowleft" size={24} color="black" />
+      </SoundButton>
       <Image source={backgroundImage} style={styles.backgroundImage} />
       <View style={styles.buttonContainer}>
         <LinearGradient
@@ -278,21 +298,23 @@ const Game2Level5 = ({ navigation, route }) => {
           style={styles.btnbac}
         >
           {isPlaying && (
-            <TouchableOpacity
-              style={styles.Button}
-              onPress={handleStartFinishButton}
-            >
-              <Text style={styles.btn_text}>Finish</Text>
-            </TouchableOpacity>
-          )}
-          {!isPlaying && (
-            <TouchableOpacity
-              style={styles.Button}
-              onPress={handleStartFinishButton}
-            >
-              <Text style={styles.btn_text}>Start</Text>
-            </TouchableOpacity>
-          )}
+        <SoundButton
+          soundPath={require('../../src/sound.mp3')}
+          onPress={handleStartFinishButton}
+          style={styles.Button}
+        >
+          <Text style={styles.btn_text}>Finish</Text>
+        </SoundButton>
+      )}
+      {!isPlaying && (
+        <SoundButton
+          soundPath={require('../../src/sound.mp3')}
+          onPress={handleStartFinishButton}
+          style={styles.Button}
+        >
+          <Text style={styles.btn_text}>Start</Text>
+        </SoundButton>
+      )}
         </LinearGradient>
       </View>
       <View style={styles.wrapper}>

@@ -19,29 +19,31 @@ import { AntDesign } from "@expo/vector-icons";
 import { RouteProp } from '@react-navigation/native';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import SoundButton from "./SoundButton";
+import TimeSpentDisplay from "./Timespent";
+import MenuExample from "./menu";
 
 const logo = require("../../assets/images/metapad.png");
 const login_bg = require("../../assets/images/login-bg.png");
 
-type RootStackParamList = {
-  Home: { uid?: string };
-};
-
-type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
-
-const Home: React.FC<{
-  route: HomeScreenRouteProp;
-}> = ({ route }) => {
+export default function HomeScreen() {
   const navigation = useNavigation();
-  const { uid } = route.params ?? {};
-
-  // If no uid is provided, return a message and stop further rendering
-  if (!uid) {
-    return <Text>No user ID provided!</Text>; // Or any other handling logic
-  }
-
+  const [uid, setUserId] = useState(null);
   const [userData, setUserData] = useState<any>(null);
-  
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('uid');
+        setUserId(storedUserId);
+      } catch (error) {
+        console.error('Error retrieving user ID:', error);
+      }
+    };
+
+    getUserId();
+  }, []);
+ 
   
   const [isLoaded] = useFonts({
     "pop-mid": require("../../assets/fonts/Poppins-Medium.ttf"),
@@ -119,97 +121,116 @@ const Home: React.FC<{
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <StatusBar hidden={true} translucent={true} />
-      <ImageBackground
-        source={login_bg}
-        resizeMode="cover"
-        style={styles.imageBackground}
-      >
-        <View style={styles.logos}>
-          <Image style={styles.logo} source={logo} />
-        </View>
-        <View style={styles.titles}>
-          <Text style={styles.head}>Welcome</Text>
-          {userData && (
-            <View>
-              <Text style={styles.belowhead}>{userData.name}</Text>
-            </View>
-          )}
-          <Text style={[styles.subheading, styles.mb30]}>
-            What would you Like to Play?
-          </Text>
-        </View>
+    <StatusBar hidden={true} translucent={true} />
+    <MenuExample/>
+    <ImageBackground
+      source={login_bg}
+      resizeMode="cover"
+      style={styles.imageBackground}
+    >
+      <View style={styles.logos}>
+        <Image style={styles.logo} source={logo} />
+      </View>
+      <View style={styles.titles}>
+        <Text style={styles.head}>Welcome</Text>
+        {userData && (
+          <View>
+            <Text style={styles.belowhead}>{userData.name}</Text>
+          </View>
+        )}
+        <Text style={[styles.subheading, styles.mb30]}>
+          What would you Like to Play?
+        </Text>
+      </View>
 
-        <View>
-          <TouchableOpacity style={[styles.puzzleBtns, styles.boxShadow]} onPress={() => navigation.navigate("Levels",{ uid: uid })} >
-            <Text style={styles.puzzleHead}>Puzzle 1</Text>
-            <Image
-              style={styles.puzzleBtn}
-              resizeMode="contain"
-              source={require("../../assets/images/originalImage.jpg")}
-            />
-            <View style={styles.playBtns}>
-              <View>
-                <Text style={styles.pBtnHead} >Electron Transport Chain</Text>
-              </View>
-              <View style={styles.playBtn}>
-                <AntDesign name="caretright" size={20} color="#fff" />
-              </View>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.puzzleBtns, styles.boxShadow]} onPress={() => navigation.navigate("game2levels",{ uid: uid })} >
-            <Text style={styles.puzzleHead}>Puzzle 2</Text>
-            <Image
-              style={styles.puzzleBtn}
-              resizeMode="contain"
-              source={require("../../assets/images/puzzle2.jpg")}
-            />
-            <View style={styles.playBtns}>
-              <View>
-                <Text style={styles.pBtnHead} > Glycogen Metabolism</Text>
-              </View>
-              <View style={styles.playBtn}>
-                <AntDesign name="caretright" size={20} color="#fff" />
-              </View>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.puzzleBtns, styles.boxShadow]} onPress={() => navigation.navigate("game3levels",{ uid: uid })} >
-            <Text style={styles.puzzleHead}>Puzzle 3</Text>
-            <Image
-              style={styles.puzzleBtn}
-              resizeMode="contain"
-              source={require("../../assets/images/puzzle3.jpg")}
-            />
-            <View style={styles.playBtns}>
-              <View>
-                <Text style={styles.pBtnHead} > Gluconeogenesis</Text>
-              </View>
-              <View style={styles.playBtn}>
-                <AntDesign name="caretright" size={20} color="#fff" />
-              </View>
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={[styles.puzzleBtns, styles.boxShadow]} onPress={() => navigation.navigate("game4levels",{ uid: uid })} >
-            <Text style={styles.puzzleHead}>Puzzle 4</Text>
-            <Image
-              style={styles.puzzleBtn}
-              resizeMode="contain"
-              source={require("../../assets/images/puzzle4.jpg")}
-            />
-            <View style={styles.playBtns}>
-              <View>
-                <Text style={styles.pBtnHead} > TCA Cycle </Text>
-              </View>
-              <View style={styles.playBtn}>
-                <AntDesign name="caretright" size={20} color="#fff" />
-              </View>
-            </View>
-          </TouchableOpacity>
+      <View>
+      <SoundButton
+        soundPath={require('../../src/sound.mp3')} // Update with your sound file path
+        onPress={() => navigation.navigate('Levels', { uid })}
+        style={[styles.puzzleBtns, styles.boxShadow]}
+      >
+        <Text style={styles.puzzleHead}>Puzzle 1</Text>
+        <Image
+          style={styles.puzzleBtn}
+          resizeMode="contain"
+          source={require('../../assets/images/originalImage.jpg')}
+        />
+        <View style={styles.playBtns}>
+          <View>
+            <Text style={styles.pBtnHead}>Electron Transport Chain</Text>
+          </View>
+          <View style={styles.playBtn}>
+            <AntDesign name="caretright" size={20} color="#fff" />
+          </View>
         </View>
-      </ImageBackground>
-    </ScrollView>
+      </SoundButton>
+      <SoundButton
+        soundPath={require('../../src/sound.mp3')} // Update with your sound file path
+        onPress={() => navigation.navigate('game2levels', { uid })}
+        style={[styles.puzzleBtns, styles.boxShadow]}
+      >
+        <Text style={styles.puzzleHead}>Puzzle 2</Text>
+        <Image
+          style={styles.puzzleBtn}
+          resizeMode="contain"
+          source={require('../../assets/images/puzzle2.jpg')}
+        />
+        <View style={styles.playBtns}>
+          <View>
+            <Text style={styles.pBtnHead}>TCA Cycle</Text>
+          </View>
+          <View style={styles.playBtn}>
+            <AntDesign name="caretright" size={20} color="#fff" />
+          </View>
+        </View>
+      </SoundButton>
+
+      <SoundButton
+        soundPath={require('../../src/sound.mp3')} // Update with your sound file path
+        onPress={() => navigation.navigate('game3levels', { uid })}
+        style={[styles.puzzleBtns, styles.boxShadow]}
+      >
+        <Text style={styles.puzzleHead}>Puzzle 3</Text>
+        <Image
+          style={styles.puzzleBtn}
+          resizeMode="contain"
+          source={require('../../assets/images/puzzle3.jpg')}
+        />
+        <View style={styles.playBtns}>
+          <View>
+            <Text style={styles.pBtnHead}> Glycogen Metabolism</Text>
+          </View>
+          <View style={styles.playBtn}>
+            <AntDesign name="caretright" size={20} color="#fff" />
+          </View>
+        </View>
+      </SoundButton>
+
+      <SoundButton
+        soundPath={require('../../src/sound.mp3')} // Update with your sound file path
+        onPress={() => navigation.navigate('game4levels', { uid })}
+        style={[styles.puzzleBtns, styles.boxShadow]}
+      >
+        <Text style={styles.puzzleHead}>Puzzle 4</Text>
+        <Image
+          style={styles.puzzleBtn}
+          resizeMode="contain"
+          source={require('../../assets/images/puzzle4.jpg')}
+        />
+        <View style={styles.playBtns}>
+          <View>
+            <Text style={styles.pBtnHead}>Gluconeogenesis</Text>
+          </View>
+          <View style={styles.playBtn}>
+            <AntDesign name="caretright" size={20} color="#fff" />
+          </View>
+        </View>
+      </SoundButton>
+      </View>
+    </ImageBackground>
+  </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -218,16 +239,17 @@ const styles = StyleSheet.create({
   },
   imageBackground: {
     flex: 1,
-    padding: 40,
+    padding: 30,
+    paddingTop:10,
     justifyContent: "center",
   },
   logos: {
-    alignItems: "center",
+    alignItems: "flex-end",
   },
   logo: {
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
-    width: 250,
+    width: 220,
     height: 70,
     resizeMode: "contain",
   },
@@ -307,5 +329,3 @@ const styles = StyleSheet.create({
     fontFamily: "pop-reg",
   },
 });
-
-export default Home;
