@@ -1,4 +1,4 @@
-import React,{useEffect,useRef} from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Audio } from 'expo-av';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import Animated, {
@@ -9,7 +9,7 @@ import Animated, {
   withTiming,
   runOnJS,
 } from 'react-native-reanimated';
-import { MARGIN, getOrder, getPosition } from '../utils/utils4-5';
+import { MARGIN, getOrder, getPosition } from '../utils/utils1-3';
 
 const Draggable = ({ children, positions, id, gameStarted }) => {
   const position = getPosition(positions.value[id]);
@@ -88,7 +88,6 @@ const Draggable = ({ children, positions, id, gameStarted }) => {
     },
   });
 
-
   const animatedStyle = useAnimatedStyle(() => {
     const zIndex = isGestureActive.value ? 1000 : 1;
     const scale = isGestureActive.value ? 1.1 : 1;
@@ -96,7 +95,11 @@ const Draggable = ({ children, positions, id, gameStarted }) => {
       position: 'absolute',
       margin: MARGIN * 2,
       zIndex,
-      transform: [{ translateX: translateX.value }, { translateY: translateY.value }, { scale }],
+      transform: [
+        { translateX: translateX.value },
+        { translateY: translateY.value },
+        { scale },
+      ],
     };
   });
 

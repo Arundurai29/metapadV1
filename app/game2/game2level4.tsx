@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     // padding: 16,
-     marginTop: 13,
+     marginTop: 25 ,
      marginLeft:75,
      backgroundColor:'#000'
   },
@@ -340,8 +340,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 45,
-    height: 67,
+    width: 57,
+    height: 70,
     borderColor: "#000",
     borderWidth: 0.3,
     padding:0,

@@ -341,8 +341,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 45,
-    height: 67,
+    width: 57,
+    height: 70,
     borderColor: "#000",
     borderWidth: 0.3,
     padding:0,

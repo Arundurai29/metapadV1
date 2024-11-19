@@ -31,18 +31,39 @@ export default function HomeScreen() {
   const navigation = useNavigation();
   const [uid, setUserId] = useState(null);
   const [userData, setUserData] = useState<any>(null);
+
+
   useEffect(() => {
+    const signInAnonymously = async () => {
+      try {
+        const userCredential = await AUTH.signInAnonymously();
+        const user = userCredential.user;
+        await AsyncStorage.setItem('uid', user.uid);
+        setUserId(user.uid);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error signing in anonymously:', error);
+        setLoading(false);
+      }
+    };
+
     const getUserId = async () => {
       try {
         const storedUserId = await AsyncStorage.getItem('uid');
-        setUserId(storedUserId);
+        if (storedUserId) {
+          setUserId(storedUserId);
+        } else {
+          signInAnonymously();
+        }
       } catch (error) {
         console.error('Error retrieving user ID:', error);
+        signInAnonymously();
       }
     };
 
     getUserId();
   }, []);
+
  
   
   const [isLoaded] = useFonts({
@@ -75,6 +96,7 @@ export default function HomeScreen() {
       unlockScreenOrientation();
     };
   }, []);
+
 
   useEffect(() => {
     if (uid) {
@@ -119,10 +141,16 @@ export default function HomeScreen() {
     return <ActivityIndicator />;
   }
 
+  const navigateToMenu = () => {
+    navigation.navigate("Menu");
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
     <StatusBar hidden={true} translucent={true} />
-    <MenuExample/>
+    <TouchableOpacity onPress={navigateToMenu} style={styles.menuButton}>
+        <AntDesign name="menu-fold" size={28} color="#fff" />
+      </TouchableOpacity>
     <ImageBackground
       source={login_bg}
       resizeMode="cover"
@@ -219,7 +247,7 @@ export default function HomeScreen() {
         />
         <View style={styles.playBtns}>
           <View>
-            <Text style={styles.pBtnHead}>Gluconeogenesis</Text>
+            <Text style={styles.pBtnHead}>Beta oxidation</Text>
           </View>
           <View style={styles.playBtn}>
             <AntDesign name="caretright" size={20} color="#fff" />
@@ -240,7 +268,7 @@ const styles = StyleSheet.create({
   imageBackground: {
     flex: 1,
     padding: 30,
-    paddingTop:10,
+    paddingTop:40,
     justifyContent: "center",
   },
   logos: {
@@ -295,6 +323,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     backgroundColor: "#003090",
     paddingVertical: 20,
+  },
+  menuButton: {
+    position: "absolute",
+    top: 50,
+    left: 20,
+    zIndex: 10,
+    padding: 10,
+    backgroundColor: "#003090",
+    borderRadius: 5,
   },
   boxShadow: {
     backgroundColor: "white",

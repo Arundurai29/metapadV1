@@ -21,7 +21,7 @@ import { DATABASE } from "../../FireBaseConfig";
 import Draggable from "../draggable/draggable1-1";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
-import { MARGIN, SIZE, SIZE2 } from '../utils/utils1-1';
+import { MARGIN, SIZE, SIZE2, getPosition } from '../utils/utils1-1';
 
 const glass = require("../../assets/images/glass.png");
 const backgroundImage = require("../../src/imgpanda.png");
@@ -276,7 +276,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     // padding: 16,
      marginTop: 13,
-     marginLeft:120,
+     marginLeft:110,
      backgroundColor:'#000'
   },
   backgroundImage: {
@@ -287,8 +287,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 150,
-    height: 110,
+    width: 200,
+    height: 125,
     borderColor: "#000",
     borderWidth: 0.3,
     padding:0,

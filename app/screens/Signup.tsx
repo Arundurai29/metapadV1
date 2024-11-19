@@ -12,6 +12,8 @@ import {
   TouchableOpacity,
   ScrollView,
   Alert,
+  Platform,
+  Linking
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail } from 'firebase/auth';
@@ -44,7 +46,6 @@ const SignUpScreen: React.FC<{
 }> = ({ navigation, route }) => {
   const [isFocused, setFocused] = useState({
     name: false,
-    phone: false,
     email: false,
     password: false,
   });
@@ -95,7 +96,7 @@ const SignUpScreen: React.FC<{
           email,
           password,
           name,
-          phone,
+          
         });
       }
     } catch (error) {
@@ -152,6 +153,18 @@ const SignUpScreen: React.FC<{
     }));
   };
 
+  const openUrl = (url) => {
+    Linking.openURL(url)
+      .then((supported) => {
+        if (!supported) {
+          console.log('URL not supported');
+        } else {
+          return Linking.openURL(url);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleBlur = (field: string) => {
     setFocused((prevState) => ({
       ...prevState,
@@ -164,11 +177,17 @@ const SignUpScreen: React.FC<{
   }
 
   return (
-    <ScrollView>
-      <ImageBackground
-        source={login_bg}
-        resizeMode="cover"
-        style={styles.container}>
+    <ImageBackground
+    source={login_bg}
+    resizeMode="cover"
+    style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        style={styles.keyboardAvoidingContainer}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      >
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+
         <View style={styles.Logos}>
           <Image style={styles.Logo} source={logo} />
         </View>
@@ -178,7 +197,7 @@ const SignUpScreen: React.FC<{
             Create an account so you can explore all our puzzles
           </Text>
         </View>
-        <KeyboardAvoidingView behavior="padding">
+     
           <TextInput
             style={{
               ...styles.input,
@@ -193,20 +212,7 @@ const SignUpScreen: React.FC<{
             onFocus={() => handleFocus('name')}
             onBlur={() => handleBlur('name')}
           />
-          <TextInput
-            style={{
-              ...styles.input,
-              borderColor: isFocused.phone ? '#003090' : '#fff',
-              borderWidth: 1,
-              color: isFocused.phone ? '#000' : 'black',
-            }}
-            placeholder="Phone Number"
-            keyboardType="phone-pad"
-            value={phone}
-            onChangeText={(text) => setPhoneNumber(text)}
-            onFocus={() => handleFocus('phone')}
-            onBlur={() => handleBlur('phone')}
-          />
+        
           <TextInput
             style={{
               ...styles.input,
@@ -248,7 +254,7 @@ const SignUpScreen: React.FC<{
                 ]}
               />
             </TouchableOpacity>
-            <Text style={styles.checkboxText}>
+            <Text onPress={Linking=>(openUrl('https://metapadprivacy.netlify.app/'))} style={styles.checkboxText}>
               I agree to the terms and conditions
             </Text>
           </View>
@@ -280,9 +286,10 @@ const SignUpScreen: React.FC<{
       />
             </View>
           )}
-        </KeyboardAvoidingView>
-      </ImageBackground>
-    </ScrollView>
+       
+       </ScrollView>
+      </KeyboardAvoidingView>
+    </ImageBackground>
   );
 };
 
@@ -302,6 +309,18 @@ const SignUpScreen: React.FC<{
       borderRadius: 10,
       marginTop:30,
     },
+    scrollViewContent: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    keyboardAvoidingContainer: {
+      flex: 1,
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+    },
     input: {
       marginTop: 16,
       paddingVertical: 10,
@@ -313,6 +332,7 @@ const SignUpScreen: React.FC<{
       fontSize: 16,
       fontFamily: "pop-reg",
       fontWeight:'500',
+      width:"100%"
     },
     login: {
       color: "#FFF",

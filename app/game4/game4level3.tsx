@@ -71,22 +71,11 @@ const Game4Level3 = ({ navigation, route }) => {
     )
   );
 
-  // useEffect(() => {
-  //   const setScreenOrientation = async () => {
-  //     await ScreenOrientation.lockAsync(
-  //       ScreenOrientation.OrientationLock.PORTRAIT
-  //     );
-  //   };
-  //   setScreenOrientation();
-  // }, []);
-
-  // Lock screen orientation to landscape when screen gains focus
   useEffect(() => {
     const lockScreenOrientation = async () => {
-      await ScreenOrientation.lockAsync(
-        ScreenOrientation.OrientationLock.PORTRAIT
-      );
+      await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
     };
+
     const unsubscribe = navigation.addListener("focus", lockScreenOrientation);
 
     return unsubscribe;
@@ -204,7 +193,7 @@ const Game4Level3 = ({ navigation, route }) => {
   };
 
   const navigateToPrices = () => {
-    navigation.navigate("gamelevel", { uid: uid,level: "game4level3" });
+    navigation.navigate("game4level", { uid: uid,level: "game4level3" });
   };
 
   const memoizedUserData = useMemo(() => userData?.name || "", [userData]);
@@ -303,7 +292,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     // padding: 16,
-     marginTop: 110,
+     marginTop: 140,
      marginLeft:20,
      backgroundColor:'#000'
   },
@@ -315,8 +304,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 80,
-    height: 80,
+    width: 90,
+    height: 90,
     borderColor: "#000",
     borderWidth:0.3,
     padding:0,
@@ -326,7 +315,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 20,
+    marginTop: 40,
     position: "absolute",
     right: 15,
   },
@@ -336,7 +325,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     position: "absolute",
     right: 15,
-    bottom:20,
+    bottom:40,
   },
 btn_text:{
   fontSize: 18,
@@ -367,7 +356,7 @@ btn_text:{
   },
   arrowButton: {
     position: "absolute",
-    top: 20,
+    top: 40,
     left: 15,
     zIndex: 999,
     backgroundColor: "#fff",

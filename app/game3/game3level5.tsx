@@ -360,8 +360,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 50,
-    height: 38,
+    width: 73,
+    height: 42,
     borderColor: "#000",
     borderWidth: 0.3,
     padding:0,

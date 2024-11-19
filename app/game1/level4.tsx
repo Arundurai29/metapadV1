@@ -337,8 +337,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 70,
-    height: 40,
+    width: 90,
+    height: 47,
     borderColor: "#000",
     borderWidth: 1,
     padding:0,

@@ -1,53 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text,AppState } from 'react-native';
+// TimeTrackingContext.tsx
+
+import React, { createContext, useState, useEffect, ReactNode } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const TimeSpentDisplay = () => {
-    const [timeSpent, setTimeSpent] = useState(0);
-  
-    useEffect(() => {
-      loadTimeSpent();
-      
-      const subscription = AppState.addEventListener('change', handleAppStateChange);
-  
-      return () => {
-        subscription.remove();
-      };
-    }, []);
-  
-    const handleAppStateChange = async (nextAppState: string) => {
-        if (nextAppState === 'background') {
-          // App is transitioning to background, calculate time spent
-          const startTime = await AsyncStorage.getItem('startTime');
-          if (startTime) {
-            const endTime = Date.now();
-            const timeDifference = endTime - parseInt(startTime, 10);
-            const updatedTimeSpent = timeSpent + timeDifference;
-            await AsyncStorage.setItem('timeSpent', updatedTimeSpent.toString());
-            setTimeSpent(updatedTimeSpent);
-          }
-        } else if (nextAppState === 'active') {
-          // App is transitioning to active, record start time
-          await AsyncStorage.setItem('startTime', Date.now().toString());
-        }
-      };
-      
-  
-    const loadTimeSpent = async () => {
-      const storedTimeSpent = await AsyncStorage.getItem('timeSpent');
-      if (storedTimeSpent) {
-        setTimeSpent(parseInt(storedTimeSpent, 10));
+interface TimeTrackingContextType {
+  totalTime: number;
+}
+
+const defaultValue: TimeTrackingContextType = {
+  totalTime: 0,
+};
+
+export const TimeTrackingContext = createContext<TimeTrackingContextType>(defaultValue);
+
+interface TimeTrackingProviderProps {
+  children: ReactNode;
+}
+
+export const TimeTrackingProvider: React.FC<TimeTrackingProviderProps> = ({ children }) => {
+  const [totalTime, setTotalTime] = useState<number>(0);
+
+  useEffect(() => {
+    const loadTotalTime = async () => {
+      const savedTotalTime = await AsyncStorage.getItem('totalTime');
+      if (savedTotalTime) {
+        setTotalTime(parseInt(savedTotalTime, 10));
       }
     };
-  
-    const hours = Math.floor(timeSpent / 3600000);
-    const minutes = Math.floor((timeSpent % 3600000) / 60000);
-  
-    return (
-      <View>
-        <Text style={{fontSize:18,alignItems:'center',textAlign:'center',marginLeft:5,marginVertical:0}}>{`${hours} : ${minutes} `}</Text>
-      </View>
-    );
-  };
-  
-  export default TimeSpentDisplay;
+
+    loadTotalTime();
+
+    const startTime = new Date().getTime();
+
+    const interval = setInterval(() => {
+      const endTime = new Date().getTime();
+      const sessionTime = (endTime - startTime) / 1000; // in seconds
+      setTotalTime(prevTotalTime => prevTotalTime + sessionTime);
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+      AsyncStorage.setItem('totalTime', totalTime.toString());
+    };
+  }, []);
+
+  return (
+    <TimeTrackingContext.Provider value={{ totalTime }}>
+      {children}
+    </TimeTrackingContext.Provider>
+  );
+};

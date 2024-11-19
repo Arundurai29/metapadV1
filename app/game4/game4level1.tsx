@@ -52,22 +52,11 @@ const Game4Level1 = ({ navigation, route }) => {
     )
   );
 
-  // useEffect(() => {
-  //   const setScreenOrientation = async () => {
-  //     await ScreenOrientation.lockAsync(
-  //       ScreenOrientation.OrientationLock.PORTRAIT
-  //     );
-  //   };
-  //   setScreenOrientation();
-  // }, []);
-
-  // Lock screen orientation to landscape when screen gains focus
   useEffect(() => {
     const lockScreenOrientation = async () => {
-      await ScreenOrientation.lockAsync(
-        ScreenOrientation.OrientationLock.PORTRAIT
-      );
+      await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT_UP);
     };
+
     const unsubscribe = navigation.addListener("focus", lockScreenOrientation);
 
     return unsubscribe;
@@ -296,8 +285,8 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 100,
-    height: 160,
+    width: 120,
+    height: 180,
     borderColor: "#000",
     borderWidth:0.3,
     padding:0,
@@ -307,7 +296,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginTop: 20,
+    marginTop: 40,
     position: "absolute",
     right: 15,
   },
@@ -316,8 +305,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     marginTop: 20,
     position: "absolute",
-    right: 15,
-    bottom:20,
+    right: 20,
+    bottom:30,
   },
 btn_text:{
   fontSize: 18,
@@ -348,7 +337,7 @@ btn_text:{
   },
   arrowButton: {
     position: "absolute",
-    top: 20,
+    top: 40,
     left: 15,
     zIndex: 999,
     backgroundColor: "#fff",

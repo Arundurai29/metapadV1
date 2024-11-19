@@ -12,7 +12,7 @@ import {
     TouchableOpacity,
     ScrollView,
     Alert,
-
+    Platform
  } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -139,20 +139,32 @@ const VerifyOTPScreen = () => {
     };
 
     return (
-            <ImageBackground
-        source={login_bg}
-        resizeMode="cover"
-        style={styles.container}>
+      <ImageBackground
+      source={login_bg}
+      resizeMode="cover"
+      style={styles.container}>
+      <ScrollView contentContainerStyle={styles.scrollViewContent}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        style={styles.keyboardAvoidingContainer}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      >
+           
         <View style={styles.Logos}>
           <Image style={styles.Logo} source={logo} />
         </View>
         <View style={styles.titles}>
           <Text style={styles.head}>Verify OTP</Text>
+          <Text style={styles.belowhead}>
+          Enter the OTP sent to 
+          </Text>
           <Text style={[styles.belowhead, styles.mb20]}>
-          Enter the OTP sent to {email}
+         {email}
           </Text>
         </View>
+        
             <View style={styles.otpContainer}>
+            <View style={styles.otpcon}>
                 {otp.map((value, index) => (
                     <TextInput
                         key={index}
@@ -164,6 +176,7 @@ const VerifyOTPScreen = () => {
                         maxLength={1} // Restrict input to one character
                     />
                 ))}
+            </View>
             </View>
             {loading ? (
                 <ActivityIndicator size="large" color="#0000ff" />
@@ -186,6 +199,9 @@ const VerifyOTPScreen = () => {
               
             )}
             {verificationMessage ? <Text style={styles.message}>{verificationMessage}</Text> : null}
+        
+        </KeyboardAvoidingView>
+        </ScrollView>
         </ImageBackground>
     );
 };
@@ -193,8 +209,8 @@ const VerifyOTPScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'flex-start',
-        alignItems: 'baseline',
+        justifyContent: 'center',
+        alignItems: 'center',
         backgroundColor: '#ffffff',
         padding: 20,
     },
@@ -203,15 +219,32 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
+    scrollViewContent: {
+      flexGrow: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    keyboardAvoidingContainer: {
+      flex: 1,
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: 20,
+    },
     subHeader: {
         fontSize: 16,
         marginBottom: 20,
         textAlign: 'center',
     },
     otpContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '60%',
+       
+        justifyContent: 'center', // Center horizontally
+        alignItems: 'center',
+    },
+    otpcon:{
+      flexDirection: 'row',
+      width: '60%',
+      margin:"auto"
     },
     otpInput: {
         width: 40,
@@ -230,12 +263,8 @@ const styles = StyleSheet.create({
     ScrollView:{
         backgroundColor:'#fff'
           },
-      container: {
-        flex: 1,
-        padding: 40,
-        backgroundColor: "#fff",
-        justifyContent: "center",
-      },
+
+      
       Button: {
         padding: 20,
         borderRadius: 10,
@@ -259,6 +288,7 @@ const styles = StyleSheet.create({
         fontSize: 20,
         fontFamily: "pop-bold",
         textAlign: "center",
+        paddingHorizontal:60,
       },
       Logos: {
         alignItems: "center",

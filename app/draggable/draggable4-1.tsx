@@ -7,6 +7,7 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
+  runOnJS,
 } from 'react-native-reanimated';
 import { MARGIN, getOrder, getPosition } from '../utils/utils4-1';
 
@@ -15,7 +16,6 @@ const Draggable = ({ children, positions, id, gameStarted }) => {
   const translateX = useSharedValue(position.x);
   const translateY = useSharedValue(position.y);
   const isGestureActive = useSharedValue(false);
-  const playSoundSignal = useSharedValue(false);
 
   const soundRef = useRef(new Audio.Sound());
 
@@ -36,22 +36,13 @@ const Draggable = ({ children, positions, id, gameStarted }) => {
     };
   }, []);
 
-  useEffect(() => {
-    const playSound = async () => {
-      try {
-        if (playSoundSignal.value) {
-          await soundRef.current.replayAsync();
-        }
-      } catch (error) {
-        console.error('Error playing sound:', error.message || error);
-      }
-    };
-
-    if (playSoundSignal.value) {
-      playSoundSignal.value = false; 
-      playSound();
+  const playSound = async () => {
+    try {
+      await soundRef.current.replayAsync();
+    } catch (error) {
+      console.error('Error playing sound:', error.message || error);
     }
-  }, [playSoundSignal.value]);
+  };
 
   useAnimatedReaction(
     () => positions.value[id],
@@ -67,6 +58,7 @@ const Draggable = ({ children, positions, id, gameStarted }) => {
       ctx.startX = translateX.value;
       ctx.startY = translateY.value;
       isGestureActive.value = true;
+      runOnJS(playSound)(); // Call the playSound function using runOnJS
     },
     onActive: (evt, ctx) => {
       translateX.value = ctx.startX + evt.translationX;
@@ -85,10 +77,6 @@ const Draggable = ({ children, positions, id, gameStarted }) => {
           positions.value = newPositions;
         }
       }
-
-      if (!playSoundSignal.value) {
-        playSoundSignal.value = true; 
-      }
     },
     onEnd: () => {
       const destination = getPosition(positions.value[id]);
@@ -99,6 +87,7 @@ const Draggable = ({ children, positions, id, gameStarted }) => {
       isGestureActive.value = false;
     },
   });
+
 
   const animatedStyle = useAnimatedStyle(() => {
     const zIndex = isGestureActive.value ? 1000 : 1;

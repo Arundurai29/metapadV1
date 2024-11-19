@@ -2,8 +2,8 @@ import {Dimensions} from 'react-native';
 
 const COL = 9;
 export const MARGIN = 0;
-export const SIZE = 50;
-export const SIZE2 =38;
+export const SIZE = 73;
+export const SIZE2 =42;
 
 export const getPosition = index => {
   'worklet';

@@ -1,45 +1,38 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
-  TextInput,
-  Button,
-  ImageBackground,
-  StyleSheet,
-  ActivityIndicator,
-  KeyboardAvoidingView,
-  Image,
   Text,
+  Image,
+  StyleSheet,
   TouchableOpacity,
-  Platform,
   Animated,
   ScrollView,
-  Modal,
-} from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { AntDesign } from "@expo/vector-icons";
-import * as ScreenOrientation from "expo-screen-orientation";
+  ImageBackground,
+} from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { AntDesign } from '@expo/vector-icons';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { StatusBar } from 'expo-status-bar';
-import SoundButton from "../screens/SoundButton";
-import ImageViewer from "react-native-image-zoom-viewer";
+import ImageViewer from 'react-native-image-zoom-viewer';
+import SoundButton from '../screens/SoundButton';
 
-const doctor1 = require("../../assets/images/doctor3.png");
-const doctor2 = require("../../assets/images/doctor4.png");
-const login_bg = require("../../src/imgpanda.png");
-const originalImage = require("../../assets/images/puzzle3.jpg");
+const doctor1 = require('../../assets/images/doctor3.png');
+const doctor2 = require('../../assets/images/doctor4.png');
+const login_bg = require('../../src/imgpanda.png');
+const originalImage = require('../../assets/images/puzzle3.jpg');
 
 type RootStackParamList = {
   Home: { uid?: string };
 };
 
-type HomeScreenRouteProp = RouteProp<RootStackParamList, "Home">;
+type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
 
-const Game3level: React.FC<{
+const Level: React.FC<{
   route: HomeScreenRouteProp;
 }> = ({ route }) => {
   const navigation = useNavigation();
-  const { uid,level } = route.params ?? {};
+  const { uid, level } = route.params ?? {};
   const [modalVisible, setModalVisible] = useState(false);
-  const [hasShownPopup, setHasShownPopup] = useState(false);
   const scaleValue = useState(new Animated.Value(0))[0];
 
   useEffect(() => {
@@ -48,10 +41,14 @@ const Game3level: React.FC<{
         ScreenOrientation.OrientationLock.LANDSCAPE
       );
     };
-    const unsubscribe = navigation.addListener("focus", lockScreenOrientation);
+    const unsubscribe = navigation.addListener('focus', lockScreenOrientation);
     openModal();
     return unsubscribe;
   }, [navigation]);
+
+  const navigateToPrices = () => {
+    navigation.navigate('game3levels', { uid });
+  };
 
   const openModal = () => {
     Animated.timing(scaleValue, {
@@ -67,222 +64,215 @@ const Game3level: React.FC<{
       toValue: 0,
       duration: 300,
       useNativeDriver: true,
-    }).start();
-    setTimeout(() => setModalVisible(false), 300);
+    }).start(() => setModalVisible(false));
   };
 
-  const images = [
-    {
-      url: '', 
-      props: {
-        source: originalImage
-      }
-    }
-  ];
-
-  const navigateToPrices = async () => {
-    // await ScreenOrientation.lockAsync(
-    //   ScreenOrientation.OrientationLock.PORTRAIT
-    // );
-    navigation.navigate("game3levels", { uid: uid });
-  };
+  const images = [{ url: '', props: { source: originalImage } }];
 
   return (
-    <ScrollView>
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <StatusBar hidden={true} translucent={true} />
       <ImageBackground
         source={login_bg}
         resizeMode="cover"
         style={styles.container}
       >
-       <SoundButton
-        soundPath={require('../../src/sound.mp3')}
-        onPress={navigateToPrices}
-        style={styles.arrowButton}
-      >
-        <AntDesign name="arrowleft" size={24} color="black" />
-      </SoundButton>
-        <View style={styles.level_section}>
-          <Image source={doctor1} style={styles.doctor_img} />
+        <SoundButton
+          soundPath={require('../../src/sound.mp3')}
+          onPress={navigateToPrices}
+          style={styles.arrowButton}
+        >
+          <AntDesign name="arrowleft" size={24} color="black" />
+        </SoundButton>
+        <View style={styles.levelSection}>
+          <Image source={doctor1} style={styles.doctorImg} />
           <View style={styles.levels}>
-            <View>
-              <Text style={styles.level}>{level.substr(-6)}</Text>
-              <TouchableOpacity onPress={openModal}>
-                <Image style={styles.puzzleBtn} source={originalImage} />
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.level}>{level?.substr(-6)}</Text>
+            <TouchableOpacity onPress={openModal}>
+              <Image style={styles.puzzleBtn} source={originalImage} />
+            </TouchableOpacity>
             <View style={styles.titles}>
-              <Text style={styles.head}>Glycogen Metabolism</Text>
+              <Text style={styles.head}>Electron Transport Chain</Text>
+              <SoundButton
+                soundPath={require('../../src/sound.mp3')}
+                onPress={() => navigation.navigate(level, { uid })}
+                style={styles.puzzleBtns}
+              >
+                <Text style={styles.pBtnHead}>Start To Play</Text>
+              </SoundButton>
             </View>
-            <SoundButton
-        soundPath={require('../../src/sound.mp3')} // Update with your sound file path
-        onPress={() => navigation.navigate(level, { uid })}
-        style={styles.puzzleBtns}
-      >
-        <Text style={styles.pBtnHead}>Start To Play</Text>
-      </SoundButton>
           </View>
-          <Image source={doctor2} style={styles.doctor_img} />
+          <Image source={doctor2} style={styles.doctorImg} />
         </View>
       </ImageBackground>
-      
-      <Modal
-        animationType="none"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={closeModal}
-      >
-        <TouchableOpacity
-          style={styles.modalContainer}
-          activeOpacity={1}
-          onPress={closeModal}
-        >
-          <Animated.View
-            style={[styles.popup, { transform: [{ scale: scaleValue }] }]}
-          >
-            <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
-              <AntDesign name="close" size={24} color="#fff" />
-            </TouchableOpacity>
-           <ImageViewer style={styles.modalImage}  backgroundColor="transparent" imageUrls={images} enableSwipeDown={true} onSwipeDown={closeModal} />
-            <SoundButton
-        title="View More"
-        soundPath={require('../../src/sound.mp3')}
-        onPress={() => navigation.navigate("MetaBites3", { uid: uid,level })}
-        style={styles.viewmore}
-        textStyle={styles.view}
-      />
-          </Animated.View>
-        </TouchableOpacity>
-      </Modal>
+
+      {modalVisible && (
+        <CustomPopup
+          images={images}
+          closeModal={closeModal}
+          navigation={navigation}
+          uid={uid}
+          level={level}
+        />
+      )}
     </ScrollView>
   );
 };
 
+const CustomPopup: React.FC<{
+  images: { url: string; props: any }[];
+  closeModal: () => void;
+  navigation: any;
+  uid: string;
+  level: string;
+}> = ({ images, closeModal, navigation, uid, level }) => {
+  const scaleValue = useState(new Animated.Value(0))[0];
+
+  useEffect(() => {
+    Animated.timing(scaleValue, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  return (
+    <View style={styles.popupContainer}>
+      <TouchableOpacity style={styles.closeButton} onPress={closeModal}>
+        <AntDesign name="close" size={24} color="#fff" />
+      </TouchableOpacity>
+      <Animated.View style={[styles.popupContent, { transform: [{ scale: scaleValue }] }]}>
+        <ImageViewer
+          style={styles.modalImage}
+          backgroundColor="transparent"
+          imageUrls={images}
+          enableSwipeDown={true}
+          onSwipeDown={closeModal}
+        />
+        <SoundButton
+          title="Meta Bites"
+          soundPath={require('../../src/sound.mp3')}
+          onPress={() => navigation.navigate('MetaBites3', { uid, level })}
+          style={styles.viewmore}
+          textStyle={styles.view}
+        />
+      </Animated.View>
+    </View>
+  );
+};
+
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
     padding: 40,
-    backgroundColor: "#fff",
-    justifyContent: "center",
+    backgroundColor: '#fff',
+    justifyContent: 'center',
     paddingTop: 50,
-    paddingBottom:60,
+    paddingBottom: 60,
   },
-  level_section: {
+  levelSection: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
   },
   titles: {
     marginTop: 20,
-    textAlign: "center",
+    textAlign: 'center',
   },
   head: {
-    color: "#fff",
-    textAlign: "center",
-    fontFamily: "pop-bold",
+    color: '#fff',
+    textAlign: 'center',
+    fontFamily: 'pop-bold',
     fontSize: 20,
-    fontWeight: "800",
+    fontWeight: '800',
     marginBottom: 15,
   },
   puzzleBtn: {
-    width: "100%",
+    width: '100%',
     height: 150,
     borderRadius: 45 / 2,
     borderWidth: 6,
-    objectFit: "contain",
-    borderColor: "#003090",
-    backgroundColor:'#fff',
+    borderColor: '#003090',
   },
   puzzleBtns: {
-    alignItems: "center",
+    alignItems: 'center',
     borderRadius: 20,
-    backgroundColor: "#003090",
+    backgroundColor: '#003090',
     paddingVertical: 10,
     marginTop: 10,
-    width: "auto",
+    width: 'auto',
   },
   viewmore: {
-    alignItems: "center",
+    alignItems: 'center',
     borderRadius: 20,
-    backgroundColor: "#003090",
-    paddingVertical: 5,
-    paddingHorizontal: 12,
+    backgroundColor: '#003090',
+    paddingVertical: 20,
+    paddingHorizontal: 30,
     marginTop: 10,
-    width: "auto",
+    width: 'auto',
   },
   view: {
-    color: "#fff",
-  },
-  pb50: {
-    paddingBottom: 50,
-  },
-  playBtns: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginTop: 0,
-    flex: 1,
-    gap: 100,
+    color: '#fff',
+    fontSize:22,
   },
   levels: {
-    width: "40%",
+    width: '40%',
   },
-  doctor_img: {
-    width: "30%",
+  doctorImg: {
+    width: '30%',
     height: 200,
-    transform: [{ rotate: "-90deg" }],
-    objectFit: "contain",
+    transform: [{ rotate: '-90deg' }],
   },
   pBtnHead: {
-    color: "#fff",
+    color: '#fff',
   },
   level: {
-    position: "absolute",
-    backgroundColor: "#003090",
-    color: "#fff",
+    position: 'absolute',
+    backgroundColor: '#003090',
+    color: '#fff',
     padding: 5,
     borderRadius: 8,
     zIndex: 3,
-    marginLeft: "40%",
+    marginLeft: '40%',
     marginTop: -10,
-    textAlign: "center",
-    textTransform:'capitalize',
+    textAlign: 'center',
+    textTransform: 'capitalize',
   },
   arrowButton: {
-    position: "absolute",
+    position: 'absolute',
     top: 20,
     left: 20,
     zIndex: 999,
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     padding: 10,
     borderRadius: 10,
   },
-  modalContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+  popupContainer: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  popup: {
-    // backgroundColor: "#fff",
+  popupContent: {
+    backgroundColor: '#fff',
     borderRadius: 10,
-    padding: 0,
-
-    alignItems: "center",
+    padding: 20,
+    alignItems: 'center',
   },
   closeButton: {
-    position: "absolute",
-    top: 10,
-    right: -40,
-
-    zIndex: 1,
+    position: 'absolute',
+    top: 20,
+    right: 30,
   },
   modalImage: {
-    width: 600,
+    width: 550,
     height: 300,
-    marginTop: -40,
-    objectFit: "contain",
+    marginTop: 20,
   },
 });
 
-export default Game3level;
+export default Level;

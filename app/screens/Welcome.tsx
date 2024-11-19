@@ -11,6 +11,7 @@ import {
     TouchableOpacity,
     ScrollView,
     Alert,
+    Linking
   } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -59,38 +60,18 @@ const Welcome = () => {
         <View style={styles.Logos}>
           <Image style={styles.Logo} source={logo} />
         </View>
-        <Text style={styles.title}>Dear Children,</Text>
+        <Text style={styles.content}>Play, engage and learn biochemistry with METAPAD– where education meets entertainment!         </Text>
           
           <Text style={styles.content}>
-            Now, METAPAD has been developed as a digital app with various features and highlights.
+          <Text style={styles.step}>METAPAD</Text> (META bolic PA thways D ecoded) is a dynamic, game-based learning app specifically crafted to transform the way you learn and remember the intricate details of metabolic pathways in biochemistry. This innovative app simplifies these complex topics, making them accessible and engaging through puzzle-based gameplay and knowledge enhancing METABITES. By turning challenging content into a series of fun and interactive challenges, METAPAD ensures a deeper understanding and enhanced retention of biochemical pathways.  Get ready to dive into the fascinating world of biochemistry, master metabolic pathways with ease, and enjoy the thrill of learning like never before. 
           </Text>
-          
-          <Text style={styles.content}>
-            This digital app further eases the learning with more accessible and immersive content.
-          </Text>
-          
-          <Text style={styles.content}>
-            In order to validate this newly developed METAPAD app, you all have been invited to use the app and provide your feedback through survey links that will be shared with you.
-          </Text>
-          
-          <Text style={styles.content}>
-            I thank you all for agreeing to participate in this validation.
-          </Text>
-          
-          <Text style={styles.content}>
-            Kindly spare some of your valuable time in completing this task. Below are the step-by-step instructions that you need to follow:
-          </Text>
-          
-          <Text style={styles.step}>Step 1: Download METAPAD app from App Store or Play Store using the link that will be shared with you in this group</Text>          
-          <Text style={styles.step}>Step 2: Create your account in the METAPAD app</Text>
-          <Text style={styles.step}>Step 3: Login to your account to start playing the game and exploring the features of METAPAD App.</Text>
-          <Text style={styles.note}>(A list of all features of the app will be sent separately)</Text>
-          
-          <Text style={styles.step}>Step 4: Provide your feedback regarding different metrics that will be asked in the survey links to be shared in the group.</Text>
-          
-          <Text style={styles.content}>
-            None of your identifying information will be revealed in the survey forms and all your responses will remain anonymous and used only for the validation results of this study.
-          </Text>
+          <TouchableOpacity style={styles.link}>
+<Text style={styles.content}>If you want know more</Text>
+          <Text style={{color: 'blue',fontSize:16,}}
+      onPress={() => Linking.openURL('https://link.springer.com/epdf/10.1186/s12909-023-04587-5?sharing_token=bOI5eRmJI8yjPfJ3NYZL_G_BpE1tBhCbnbw3BuzI2RPUARdcy2IiTaqKHM-imeCP_OXwK-KjTnfpAgC31MQTOvWkY28LLSIRxY6sKTGevaUElR5Ko21Ia7ACsQx6cAoANAaR6aaX56kdeY5hMGor-y_7EAfjwEHdbCSCe-vdKUo%3D')}>
+  Click Here
+</Text>
+          </TouchableOpacity>
           
           <Text style={styles.thankYou}>Thanking you all once again.</Text>
           <LinearGradient
@@ -167,6 +148,10 @@ const Welcome = () => {
        objectFit:'contain',
        marginBottom:20,
         
+      },
+      link:{
+        flexDirection:'row',
+        gap:20,
       },
     });
 

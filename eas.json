@@ -2,12 +2,12 @@
   "build": {
     "preview": {
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       }
     },
     "preview2": {
       "android": {
-        "buildType": "apk"
+        "buildType": "app-bundle"
       }
     },
     "preview3": {
@@ -15,9 +15,12 @@
     },
     "production": {
       "android": {
-        "buildType": "apk",
+        "buildType": "app-bundle",
         "gradleCommand": ":app:bundleRelease"
       }
     }
+  },
+  "cli": {
+    "promptToConfigurePushNotifications": false
   }
 }

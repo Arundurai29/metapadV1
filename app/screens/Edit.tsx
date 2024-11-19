@@ -6,6 +6,8 @@ import {
     ImageBackground, 
     StyleSheet, 
     Image, 
+    KeyboardAvoidingView,
+    Platform,
     Text, 
     TouchableOpacity, 
     ScrollView, 
@@ -28,8 +30,7 @@ const ProfileEditScreen = () => {
     const [selectedImage, setSelectedImage] = useState(null);
     const [isFocused, setFocused] = useState({
         name: false,
-        phone: false,
-        email: false,
+      
       });
       const [isChecked, setChecked] = useState(false); // State to track checkbox status
     
@@ -59,8 +60,7 @@ const ProfileEditScreen = () => {
 
                 await update(userRef, { 
                     name, 
-                    phone, 
-                    email, 
+                  
                     profileImage: selectedImage 
                 });
 
@@ -77,6 +77,11 @@ const ProfileEditScreen = () => {
 
     return (
         <ImageBackground source={profile_bg} resizeMode="cover" style={styles.container}>
+            <KeyboardAvoidingView
+  behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+  style={styles.keyboardAvoidingContainer}
+  keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+>
             <ScrollView contentContainerStyle={styles.contentContainer}>
       
                 <Text style={styles.head}>Edit Profile</Text>
@@ -107,30 +112,7 @@ const ProfileEditScreen = () => {
                     value={name}
                     onChangeText={setName}
                 />
-                <TextInput
-                   style={{
-                    ...styles.input,
-                    borderColor: isFocused.phone ? '#003090' : '#fff',
-                    borderWidth: 1,
-                    color: isFocused.phone ? '#000' : 'black',
-                  }}
-                    placeholder="Phone"
-                    value={phone}
-                    onChangeText={setPhone}
-                    keyboardType="phone-pad"
-                />
-                <TextInput
-                     style={{
-                        ...styles.input,
-                        borderColor: isFocused.email ? '#003090' : '#fff',
-                        borderWidth: 1,
-                        color: isFocused.email ? '#000' : 'black',
-                      }}
-                    placeholder="Email"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                />
+              
 
                 {loading ? (
                     <ActivityIndicator size="large" color="#0000ff" />
@@ -140,6 +122,8 @@ const ProfileEditScreen = () => {
                     </TouchableOpacity>
                 )}
             </ScrollView>
+            </KeyboardAvoidingView>
+            
         </ImageBackground>
     );
 };
@@ -183,6 +167,13 @@ const styles = StyleSheet.create({
         fontFamily: "pop-reg",
         fontWeight:'500',
         width:'100%',
+      },
+      keyboardAvoidingContainer: {
+        flex: 1,
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 20,
       },
     button: {
         marginTop: 20,

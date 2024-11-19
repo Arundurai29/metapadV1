@@ -15,12 +15,13 @@ import { useSharedValue } from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 import { ref, get, set } from "firebase/database";
 import { Entypo } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
 import SoundButton from "../screens/SoundButton";
+import { AntDesign } from "@expo/vector-icons";
 import { DATABASE } from "../../FireBaseConfig";
-import Draggable from "../draggable/draggable";
+import Draggable from "../draggable/draggable1-3";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from 'expo-status-bar';
+import { MARGIN, SIZE, SIZE2 } from '../utils/utils1-1';
 
 const glass = require("../../assets/images/glass.png");
 const backgroundImage = require("../../src/imgpanda.png");
@@ -62,7 +63,7 @@ const Level3 = ({ navigation, route }) => {
   const { uid } = route.params ?? {};
   const [timer, setTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false); // New state variable
 
   const positions = useSharedValue(
     Object.assign(
@@ -70,15 +71,6 @@ const Level3 = ({ navigation, route }) => {
       ...imageSources.map((item, index) => ({ [index]: index }))
     )
   );
-
-  // useEffect(() => {
-  //   const setScreenOrientation = async () => {
-  //     await ScreenOrientation.lockAsync(
-  //       ScreenOrientation.OrientationLock.PORTRAIT
-  //     );
-  //   };
-  //   setScreenOrientation();
-  // }, []);
 
   // Lock screen orientation to landscape when screen gains focus
   useEffect(() => {
@@ -154,7 +146,7 @@ const Level3 = ({ navigation, route }) => {
       (a, b) => a - b
     );
     const originalOrder = [...Array(imageSources.length).keys()];
-    const allowedPositions = [0,3,4,5,6,21];
+    const allowedPositions = [0, 2, 3];
     const isComplete = currentPositions.every((value, index) => {
       return allowedPositions.includes(index) || value === originalOrder[index];
     });
@@ -177,8 +169,6 @@ const Level3 = ({ navigation, route }) => {
     }
   };
 
-
-
   const handleStartFinishButton = () => {
     if (!isPlaying) {
       setIsPlaying(true);
@@ -189,7 +179,7 @@ const Level3 = ({ navigation, route }) => {
   };
 
   const checkPosition = () => {
-    const allowedPositions = [0,3,4,5,6,21];
+    const allowedPositions = [0, 2, 3];
     let allPlaced = true;
 
     for (let i = 0; i < imageSources.length; i++) {
@@ -226,7 +216,6 @@ const Level3 = ({ navigation, route }) => {
   };
 
   return (
-    // <ScrollView>
     <GestureHandlerRootView style={styles.container}>
       <SoundButton
         soundPath={require('../../src/sound.mp3')}
@@ -248,17 +237,15 @@ const Level3 = ({ navigation, route }) => {
             <Entypo name="stopwatch" size={24} color="#fff" /> {formatTimer()}
           </Text>
         </LinearGradient>
-
-        
       </View>
       <View style={styles.btnContainer} >
-      <LinearGradient
+        <LinearGradient
           start={{ x: 0, y: 0.2 }}
           colors={["#003090", "#3B66CF"]}
           end={{ x: 1, y: 2 }}
           style={styles.btnbac}
         >
-           {isPlaying && (
+          {isPlaying && (
         <SoundButton
           soundPath={require('../../src/sound.mp3')}
           onPress={handleStartFinishButton}
@@ -282,7 +269,7 @@ const Level3 = ({ navigation, route }) => {
         {imageSources.map((source, index) => (
           <Draggable
             key={index}
-            positions={positions}
+            positions={positions} 
             id={index}
             gameStarted={gameStarted} 
           >
@@ -292,7 +279,6 @@ const Level3 = ({ navigation, route }) => {
       </View>
       <StatusBar hidden={true} translucent={true} />
     </GestureHandlerRootView>
-    // </ScrollView>
   );
 };
 
@@ -308,8 +294,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     // padding: 16,
-     marginTop: -10,
-     marginLeft:38,
+     marginTop: 24,
+     marginLeft:100,
      backgroundColor:'#000'
   },
   backgroundImage: {
@@ -320,13 +306,13 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   image: {
-    width: 80,
-    height: 80,
+    width: 90,
+    height: 90,
     borderColor: "#000",
-    borderWidth: 1,
-   padding:0,
-   objectFit:'fill',
-   margin:0,
+    borderWidth: 0.3,
+    padding:0,
+    objectFit:'fill',
+    marginBottom:-20,
   },
   buttonContainer: {
     flexDirection: "row",

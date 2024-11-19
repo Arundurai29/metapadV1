@@ -124,7 +124,7 @@ const Game4Levels: React.FC<{
         <AntDesign name="arrowleft" size={24} color="black" />
       </SoundButton>
         <View style={styles.titles}>
-          <Text style={styles.head}>Gluconeogenesis</Text>
+          <Text style={styles.head}>Beta oxidation</Text>
         </View>
         <View style={styles.level_section}>
           <Image source={doctor1} style={styles.doctor_img} />
